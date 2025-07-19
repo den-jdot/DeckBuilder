@@ -1,0 +1,62 @@
+#root {
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 0 auto;
+  /* padding: 2rem; */
+  text-align: center;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+main {
+  height: 98vh;
+  width: 99vw;
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-area {
+  width: 98%;
+  height: 10%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.main-app {
+  height: 90%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items:end;
+  justify-content: space-around;
+  gap: 1rem;
+  /* border: 1px solid violet; */
+}
+
+.trunk-area, .deck-area, .card-area {
+  width: 25%;
+  height: 95%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.deck-area {
+  width: 42.5%;
+  height: 95%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
