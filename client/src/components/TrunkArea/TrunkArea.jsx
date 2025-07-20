@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import TrunkFilter from '../TrunkComponents/TrunkFilter'
+import TrunkListing from '../TrunkComponents/TrunkListing'
+import TrunkNav from '../TrunkComponents/TrunkNav'
 
 
 export default function TrunkArea() {
@@ -6,8 +9,9 @@ export default function TrunkArea() {
   return (
     <>
         <div className="trunk-area">
-            <h2>Trunk Area</h2>
-            <p>This is where you can manage your trunk items.</p>
+          <TrunkFilter />
+          <TrunkListing />
+          <TrunkNav />
         </div>
     </>
   )

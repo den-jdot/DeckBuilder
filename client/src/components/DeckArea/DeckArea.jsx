@@ -1,13 +1,16 @@
 import { useState } from 'react'
-
+import MainDeck from '../DeckComponents/MainDeck'
+import ExtraDeck from '../DeckComponents/ExtraDeck'
+import SideDeck from '../DeckComponents/SideDeck'
 
 export default function DeckArea() {
 
   return (
     <>
         <div className="deck-area">
-            <h2>Deck Area</h2>
-            <p>This is where you can manage your Deck items.</p>
+            <MainDeck />
+            <ExtraDeck />
+            <SideDeck />
         </div>
     </>
   )

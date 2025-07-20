@@ -48,7 +48,7 @@ main {
   height: 95%;
   border: 1px solid #ccc;
   border-radius: 8px;
-  padding: 1rem;
+  padding: 1.4rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -57,6 +57,30 @@ main {
   height: 95%;
   border: 1px solid #ccc;
   border-radius: 8px;
-  padding: 1rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.trunk-filter {
+  border: 1px solid red;
+  height: 15%;
+}
+
+.trunk-listing {
+  border: 1px solid red;
+  height: 75%;
+}
+
+.trunk-nav {
+  border: 1px solid red;
+  height: 10%;
+}
+
+.main-deck {
+  border: 1px solid red;
+  height: 70%;
+}
+
+.extra-deck, .side-deck {
+  border: 1px solid red;
+  height: 15%;
 }
