@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
@@ -6,71 +5,73 @@ import NativeSelect from '@mui/material/NativeSelect';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 
+export default function FormatArea({
+  format,
+  currentFormat,
+  setCurrentFormat,
+  currentDeck,
+  setCurrentDeck
+}) {
+  const handleFormatChange = (event) => {
+    const selectedFormat = event.target.value;
+    setCurrentFormat(selectedFormat);
 
-export default function FormatArea({format, currentFormat, setFormat, setCurrentFormat, currentDeck, setCurrentDeck}) {
-
-  const deckList = ['My Dragon Deck', 'Control Edison', 'TeleDAD Classic']; // Replace or pull from state later
-
-  const handleChange = (event) => {
-    setCurrentFormat(event.target.value);
+    // Auto-select first available deck in new format, if any
+    const formatObj = format.find(f => f.name === selectedFormat);
+    const firstDeck = formatObj?.decks ? Object.keys(formatObj.decks)[0] : "";
+    setCurrentDeck(firstDeck);
   };
 
-  return (
-    <>
-        <div className="format-area">
-          <div className="format-selector">
-            <Box sx={{ width: 160, color: 'white' }}>
-              <FormControl fullWidth>
-                <InputLabel variant="standard" htmlFor="format-select">
-                  Format
-                </InputLabel>
-                <NativeSelect
-                  value={currentFormat}
-                  onChange={handleChange}
-                  inputProps={{
-                    name: 'format',
-                    id: 'format-select',
-                  }}
-                >
-                  {format.map((fmt) => (
-                    <option key={fmt} value={fmt}>
-                      {fmt}
-                    </option>
-                  ))}
-                </NativeSelect>
-              </FormControl>
-            </Box>
-          </div>
+  const handleDeckChange = (event) => {
+    setCurrentDeck(event.target.value);
+  };
 
-          <div className="deck-selector">
-            <Box sx={{ width: 160 }}>
-              <Autocomplete
-                freeSolo
-                value={currentDeck}
-                onChange={(event, newValue) => {
-                  setCurrentDeck(newValue || "");
-                }}
-                onInputChange={(event, newInputValue) => {
-                  setCurrentDeck(newInputValue);
-                }}
-                options={deckList}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Deck"
-                    variant="standard"
-                    InputLabelProps={{ style: { color: 'white' } }}
-                    sx={{
-                      input: { color: 'white' },
-                      '& .MuiInput-underline:before': { borderBottomColor: 'white' },
-                      '& .MuiInput-underline:after': { borderBottomColor: 'white' },
-                    }}
-                  />
-                )}
+  const currentFormatObj = format.find(f => f.name === currentFormat);
+  const deckNames = currentFormatObj?.decks ? Object.keys(currentFormatObj.decks) : ["test1", "test2"];
+
+  return (
+    <div className="format-area">
+      <div className="format-selector">
+        <Box sx={{ width: 160, color: 'white' }}>
+          <FormControl fullWidth>
+            <InputLabel variant="standard" htmlFor="format-select">Format</InputLabel>
+            <NativeSelect
+              value={currentFormat}
+              onChange={handleFormatChange}
+              inputProps={{ name: 'format', id: 'format-select' }}
+            >
+              {format.map(fmt => (
+                <option key={fmt} value={fmt}>
+                  {fmt}
+                </option>
+              ))}
+            </NativeSelect>
+          </FormControl>
+        </Box>
+      </div>
+
+      <div className="deck-selector">
+        <Box sx={{ width: 160, color: 'white' }}>
+          <Autocomplete
+            freeSolo
+            options={deckNames}
+            value={currentDeck}
+            onChange={(event, newValue) => {
+              setCurrentDeck(newValue ?? "");  // handles selection from dropdown
+            }}
+            onInputChange={(event, newInputValue) => {
+              setCurrentDeck(newInputValue);   // handles typing custom input
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Deck"
+                variant="standard"
               />
-            </Box>
-          </div>
-        </div>
-    </>
-  )
+            )}
+          />
+        </Box>
+      </div>
+    </div>
+  );
 }
