@@ -1,14 +1,19 @@
-import { useState } from 'react'
-
-
-export default function TrunkNav() {
-
+export default function TrunkNav({ currentPage, setCurrentPage, maxPages }) {
   return (
-    <>
-        <div className="trunk-nav">
-            <h2>Trunk Nav</h2>
-            <p>This is where you can navigate through your trunk.</p>
-        </div>
-    </>
-  )
+    <div className="trunk-nav">
+      <button
+        onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+        disabled={currentPage === 0}
+      >
+        ◀ Prev
+      </button>
+      <span> Page {currentPage + 1} / {maxPages} </span>
+      <button
+        onClick={() => setCurrentPage(prev => Math.min(maxPages - 1, prev + 1))}
+        disabled={currentPage + 1 >= maxPages}
+      >
+        Next ▶
+      </button>
+    </div>
+  );
 }

@@ -1,14 +1,21 @@
-import { useState } from 'react'
-
-
-export default function TrunkListing() {
-
+export default function TrunkListing({ cards, setCurrentCard }) {
   return (
-    <>
-        <div className="trunk-listing">
-            <h2>Trunk Listing</h2>
-            <p>This is where your trunk items are listed.</p>
+    <div className="trunk-listing">
+      {cards.map((card) => (
+        <div
+          key={card.id}
+          className="card-entry"
+          onClick={() => setCurrentCard(card)}
+          style={{ cursor: 'pointer' }}
+        >
+          <img
+            src={card.card_images?.[0]?.image_url_small}
+            alt={card.name}
+            className="card-image"
+          />
+          <p className="card-name">{card.name}</p>
         </div>
-    </>
-  )
+      ))}
+    </div>
+  );
 }

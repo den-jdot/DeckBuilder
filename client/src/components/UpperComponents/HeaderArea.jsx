@@ -7,7 +7,7 @@ export default function HeaderArea() {
     <>
         <div className="header-area">
             <h2>Header Area</h2>
-            <p>This is where you see your Header items.</p>
+            <p>This is where you see the header.</p>
         </div>
     </>
   )
