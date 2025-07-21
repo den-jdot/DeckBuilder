@@ -13,7 +13,7 @@ export default function TrunkListing({ cards, setCurrentCard }) {
             alt={card.name}
             className="card-image"
           />
-          <p className="card-name">{card.name}</p>
+          {/* <p className="card-name">{card.name}</p> */}
         </div>
       ))}
     </div>

@@ -34,7 +34,13 @@ main {
 }
 
 .format-area, .header-area, .misc-area {
-  width: 33%;  
+  width: 33%;
+}
+
+.format-area {
+  display: flex;
+  flex-direction: row;
+  height: fit-content;
 }
 
 .format-selector {
@@ -53,7 +59,7 @@ main {
 .deck-selector {
   display: flex;
   width:fit-content;
-  background-color: rgba(240, 167, 167, 0.443);
+  background-color: rgba(192, 218, 249, 0.966);
   border-radius: 4px;
   margin: 0.1em;
   padding: 0.1em;

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 import UpperArea from './components/UpperArea/UpperArea.jsx'
@@ -35,6 +35,12 @@ function App() {
 
   const [currentDeck, setCurrentDeck] = useState("");
 
+  const [deckNameInput, setDeckNameInput] = useState("");
+
+  useEffect(() => {
+    setDeckNameInput(currentDeck);
+  }, [currentDeck]);
+
 
   return (
     <>
@@ -45,7 +51,9 @@ function App() {
           currentFormat={currentFormat}
           setCurrentFormat={setCurrentFormat}
           currentDeck={currentDeck}
-          setCurrentDeck={setCurrentDeck}/>
+          setCurrentDeck={setCurrentDeck}
+          deckNameInput={deckNameInput}
+          setDeckNameInput={setDeckNameInput}/>
 
           <div className="main-app">
 
