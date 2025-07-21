@@ -2,6 +2,9 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+
 export default function HeaderArea({currentDeck, deckNameInput, setDeckNameInput}) {
 
   return (
@@ -36,6 +39,23 @@ export default function HeaderArea({currentDeck, deckNameInput, setDeckNameInput
             }}
           />
         </Box>
+
+            <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        '& > *': {
+          m: 1,
+        },
+      }}
+    >
+      <ButtonGroup variant="contained" aria-label="Basic button group">
+        <Button>Save</Button>
+        <Button>Copy to...</Button>
+        <Button>Delete</Button>
+      </ButtonGroup>
+    </Box>
       </div>
     </>
   )
