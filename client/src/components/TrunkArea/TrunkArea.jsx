@@ -5,32 +5,25 @@ import TrunkNav from '../TrunkComponents/TrunkNav';
 
 export default function TrunkArea({
   cards,
-  currentDeck,
-  currentDeckIds,
-  currentFormat,
-  deckNameInput,
-  format,
   setCards,
   setCurrentCard,
-  setCurrentDeck,
-  setCurrentDeckIds,
-  setCurrentFormat,
-  setDeckNameInput,
-  setFormat,
+  addToMainDeck,
+  addToExtraDeck,
+  addToSideDeck,
 }) {
-  // === State ===
+  // Local state for internal card display
   const [cardMap, setCardMap] = useState({});
   const [cardIds, setCardIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
 
-  // === Constants ===
+  // Pagination setup
   const cardsPerPage = 30;
-  const maxPages = Math.ceil(cardIds.length / cardsPerPage);
   const start = currentPage * cardsPerPage;
   const end = start + cardsPerPage;
   const visibleIds = cardIds.slice(start, end);
+  const maxPages = Math.ceil(cardIds.length / cardsPerPage);
 
-  // === Data Fetch ===
+  // Fetch card data from local JSON
   useEffect(() => {
     const fetchCards = async () => {
       try {
@@ -41,13 +34,14 @@ export default function TrunkArea({
         const ids = [];
 
         for (const card of data.data) {
-          byId[String(card.id)] = card;
-          ids.push(card.id);
+          const stringId = String(card.id);
+          byId[stringId] = card;
+          ids.push(stringId);
         }
 
         setCardMap(byId);
         setCardIds(ids);
-        setCards(byId); // passes cards back to App
+        setCards(byId); // Sync with parent
       } catch (err) {
         console.error('Error loading cards:', err);
       }
@@ -56,17 +50,16 @@ export default function TrunkArea({
     fetchCards();
   }, [setCards]);
 
-  // === Drag-to-remove handler ===
+  // Allow dropping cards back from decks to trunk
   const handleDrop = (e) => {
     e.preventDefault();
     const droppedId = e.dataTransfer.getData("text/plain");
     if (droppedId) {
-      setCurrentDeckIds((prev) => prev.filter((id) => id !== droppedId));
-      console.log(`Removed ${droppedId} from Main Deck`);
+      // Drop logic is handled by decks; trunk only receives
+      console.log(`Dropped ${droppedId} onto TrunkArea (no-op here)`);
     }
   };
 
-  // === Render ===
   return (
     <div
       className="trunk-area"
@@ -75,11 +68,12 @@ export default function TrunkArea({
     >
       <TrunkFilter />
       <TrunkListing
-        cardMap={cardMap}
+        cardMap={cards}
         visibleIds={visibleIds}
         setCurrentCard={setCurrentCard}
-        currentDeckIds={currentDeckIds}
-        setCurrentDeckIds={setCurrentDeckIds}
+        addToMainDeck={addToMainDeck}
+        addToExtraDeck={addToExtraDeck}
+        addToSideDeck={addToSideDeck}
       />
       <TrunkNav
         currentPage={currentPage}

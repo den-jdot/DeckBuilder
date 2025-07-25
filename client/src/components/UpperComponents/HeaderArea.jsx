@@ -21,24 +21,26 @@ export default function HeaderArea({
   format,
   setFormat,
   currentFormat,
-  currentDeckIds,
-  setCurrentDeckIds,
+  currentDeckData,
+  setCurrentDeckData,
 }) {
-  const deckName = deckNameInput.trim();
+  const deckName = (deckNameInput ?? '').trim();
 
-  // Snackbar state
-  const [snackbar, setSnackbar] = React.useState({ open: false, message: '', severity: 'info' });
+  const [snackbar, setSnackbar] = React.useState({
+    open: false,
+    message: '',
+    severity: 'info',
+  });
+
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
 
   const openSnackbar = (message, severity = 'info') => {
     setSnackbar({ open: true, message, severity });
   };
 
   const handleSnackbarClose = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
-
-  // Delete confirmation dialog state
-  const [confirmOpen, setConfirmOpen] = React.useState(false);
 
   const handleSave = () => {
     if (!deckName) {
@@ -46,43 +48,42 @@ export default function HeaderArea({
       return;
     }
 
-    const updatedFormat = [...format];
-    const formatIndex = updatedFormat.findIndex(f => f.name === currentFormat);
-
+    const updatedFormats = [...format];
+    const formatIndex = updatedFormats.findIndex((f) => f.name === currentFormat);
     if (formatIndex === -1) {
       console.error("Current format not found");
       return;
     }
 
-    const formatObj = updatedFormat[formatIndex];
+    const formatObj = updatedFormats[formatIndex];
     if (!formatObj.decks) formatObj.decks = {};
 
-    // Save only IDs
-    formatObj.decks[deckName] = [...currentDeckIds];
+    formatObj.decks[deckName] = {
+      main: [...currentDeckData.main],
+      extra: [...currentDeckData.extra],
+      side: [...currentDeckData.side],
+    };
 
-    // Sort decks alphabetically
     const sortedDecks = Object.entries(formatObj.decks).sort(([a], [b]) => a.localeCompare(b));
     formatObj.decks = Object.fromEntries(sortedDecks);
 
-    setFormat(updatedFormat);
+    setFormat(updatedFormats);
     setCurrentDeck(deckName);
     openSnackbar(`Deck '${deckName}' saved successfully.`, 'success');
-    console.log(`Deck '${deckName}' saved with IDs:`, currentDeckIds);
+    console.log(`Deck '${deckName}' saved with cards:`, formatObj.decks[deckName]);
   };
 
   const handleDelete = () => {
-    const updatedFormat = [...format];
-    const formatIndex = updatedFormat.findIndex(f => f.name === currentFormat);
-
+    const updatedFormats = [...format];
+    const formatIndex = updatedFormats.findIndex((f) => f.name === currentFormat);
     if (formatIndex === -1) {
       console.error("Current format not found for deletion");
       return;
     }
 
-    const formatObj = updatedFormat[formatIndex];
-
+    const formatObj = updatedFormats[formatIndex];
     if (!formatObj.decks?.[deckName]) {
-      openSnackbar("No such deck found to delete", 'warning');
+      openSnackbar("No such deck found to delete", "warning");
       return;
     }
 
@@ -91,12 +92,11 @@ export default function HeaderArea({
     const remainingDecks = Object.keys(formatObj.decks);
     const nextDeck = remainingDecks[0] ?? "";
 
-    setFormat(updatedFormat);
+    setFormat(updatedFormats);
     setCurrentDeck(nextDeck);
     setDeckNameInput(nextDeck);
-    setCurrentDeckIds([]);
-
-    openSnackbar(`Deck '${deckName}' deleted.`, 'info');
+    setCurrentDeckData({ main: [], extra: [], side: [] });
+    openSnackbar(`Deck '${deckName}' deleted.`, "info");
     console.log(`Deck '${deckName}' deleted.`);
     setConfirmOpen(false);
   };
@@ -142,7 +142,7 @@ export default function HeaderArea({
         </ButtonGroup>
       </Box>
 
-      {/* Snackbar for feedback */}
+      {/* Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
@@ -158,11 +158,8 @@ export default function HeaderArea({
         </Alert>
       </Snackbar>
 
-      {/* Confirmation dialog */}
-      <Dialog
-        open={confirmOpen}
-        onClose={() => setConfirmOpen(false)}
-      >
+      {/* Delete confirmation dialog */}
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
         <DialogTitle>{`Are you sure you want to delete '${deckName}'?`}</DialogTitle>
         <DialogActions>
           <Button onClick={() => setConfirmOpen(false)} color="primary">

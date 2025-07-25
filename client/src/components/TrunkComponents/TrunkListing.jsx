@@ -1,22 +1,35 @@
-export default function TrunkListing({ cardMap, setCurrentCard, visibleIds, setCurrentDeckIds, currentDeckIds }) {
+export default function TrunkListing({
+  cardMap,
+  visibleIds,
+  setCurrentCard,
+  addToMainDeck,
+  addToExtraDeck,
+  addToSideDeck,
+}) {
+  const EXTRA_DECK_TYPES = [
+    'Fusion',
+    'Synchro',
+    'XYZ',
+    'Link',
+    'Synchro Pendulum',
+    'Fusion Pendulum',
+    'XYZ Pendulum',
+  ];
 
-  const canAddCard = (id) => {
-    const count = currentDeckIds.filter((x) => x === id).length;
-    if (currentDeckIds.length >= 60) {
-      console.log("Main Deck is full (60 cards max).");
-      return false;
-    }
-    if (count >= 3) {
-      console.log("Maximum 3 copies of this card allowed.");
-      return false;
-    }
-    return true;
-  };
+  const isExtraType = (card) =>
+    EXTRA_DECK_TYPES.some((type) =>
+      card?.type?.toLowerCase().includes(type.toLowerCase())
+    );
 
-  const addCard = (id) => {
-    if (!canAddCard(id)) return;
-    setCurrentDeckIds((prev) => [...prev, id]);
-    console.log(`Card with ID ${id} added to Main Deck.`);
+  const handleAdd = (id) => {
+    const card = cardMap[String(id)];
+    if (!card) return;
+
+    if (isExtraType(card)) {
+      addToExtraDeck(id);
+    } else {
+      addToMainDeck(id);
+    }
   };
 
   return (
@@ -32,13 +45,13 @@ export default function TrunkListing({ cardMap, setCurrentCard, visibleIds, setC
             draggable
             onClick={() => {
               setCurrentCard(card);
-              console.log("Clicked card:", card);
+              console.log('Clicked card:', card);
             }}
             onDragStart={(e) => e.dataTransfer.setData('text/plain', card.id)}
-            onDoubleClick={() => addCard(String(card.id))}
+            onDoubleClick={() => handleAdd(card.id)}
             onContextMenu={(e) => {
               e.preventDefault();
-              addCard(String(card.id));
+              handleAdd(card.id);
             }}
             style={{ cursor: 'grab' }}
           >

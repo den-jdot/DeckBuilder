@@ -1,29 +1,45 @@
-import { useState } from 'react'
-import FormatArea from '../UpperComponents/FormatArea'
-import HeaderArea from '../UpperComponents/HeaderArea'
-import MiscArea from '../UpperComponents/MiscArea'
+import FormatArea from '../UpperComponents/FormatArea';
+import HeaderArea from '../UpperComponents/HeaderArea';
+import MiscArea from '../UpperComponents/MiscArea';
 
 export default function UpperArea({
   format,
-  currentFormat,
   setFormat,
+  currentFormat,
   setCurrentFormat,
   currentDeck,
   setCurrentDeck,
   deckNameInput,
   setDeckNameInput,
   cards,
-  currentDeckIds,
-  setCurrentDeckIds
+  currentDeckData,
+  setCurrentDeckData,
 }) {
-  
   return (
-    <>
-        <div className="upper-area">
-            <FormatArea format={format} currentFormat={currentFormat} setFormat={setFormat} setCurrentFormat={setCurrentFormat} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} />
-            <HeaderArea format={format} setFormat={setFormat} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} currentFormat={currentFormat} deckNameInput={deckNameInput} setDeckNameInput={setDeckNameInput} cards={cards} currentDeckIds={currentDeckIds} setCurrentDeckIds={setCurrentDeckIds} />
-            <MiscArea />
-        </div>
-    </>
-  )
+    <div className="upper-area">
+      <FormatArea
+        format={format}
+        setFormat={setFormat}
+        currentFormat={currentFormat}
+        setCurrentFormat={setCurrentFormat}
+        currentDeck={currentDeck}
+        setCurrentDeck={setCurrentDeck}
+      />
+
+      <HeaderArea
+        format={format}
+        setFormat={setFormat}
+        currentDeck={currentDeck}
+        setCurrentDeck={setCurrentDeck}
+        currentFormat={currentFormat}
+        deckNameInput={deckNameInput}
+        setDeckNameInput={setDeckNameInput}
+        cards={cards}
+        currentDeckData={currentDeckData}
+        setCurrentDeckData={setCurrentDeckData}
+      />
+
+      <MiscArea />
+    </div>
+  );
 }

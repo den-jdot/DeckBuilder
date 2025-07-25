@@ -2,64 +2,52 @@ import { useState } from 'react';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 
-export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds, setCurrentCard, currentFormat }) {
+export default function MainDeck({
+  cards,
+  currentDeckData,
+  setCurrentDeckData,
+  setCurrentCard,
+  addCard,
+}) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
-  const mainDeckCards = currentDeckIds
+  const mainDeckCards = currentDeckData.main
     .map((id) => cards[String(id)])
-    .filter(Boolean);
-
-  const canAddCard = (id) => {
-    const count = currentDeckIds.filter((x) => x === id).length;
-    if (currentDeckIds.length >= 60) {
-      console.log("Main Deck is full (60 cards max).");
-      return false;
-    }
-    if (count >= 3) {
-      console.log("Maximum 3 copies of this card allowed.");
-      return false;
-    }
-    return true;
-  };
-
-  const addCard = (id) => {
-    if (!canAddCard(id)) return;
-    setCurrentDeckIds((prev) => [...prev, id]);
-    console.log(`Card with ID ${id} added to Main Deck.`);
-  };
+    .filter(
+      (card) =>
+        card &&
+        !card.type?.toLowerCase().includes('fusion') &&
+        !card.type?.toLowerCase().includes('synchro') &&
+        !card.type?.toLowerCase().includes('xyz') &&
+        !card.type?.toLowerCase().includes('link')
+    );
 
   const removeCard = (idToRemove) => {
-    setCurrentDeckIds((prev) => {
-      const index = prev.findIndex((id) => String(id) === String(idToRemove));
+    setCurrentDeckData((prev) => {
+      const zone = [...prev.main];
+      const index = zone.findIndex((id) => String(id) === String(idToRemove));
       if (index === -1) return prev;
-      const newDeck = [...prev];
-      newDeck.splice(index, 1);
-      return newDeck;
+      zone.splice(index, 1);
+      return { ...prev, main: zone };
     });
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDraggingOver(false);
-    const droppedId = String(e.dataTransfer.getData("text/plain"));
+    const droppedId = String(e.dataTransfer.getData('text/plain'));
     if (droppedId) addCard(droppedId);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDraggingOver(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDraggingOver(false);
   };
 
   return (
     <div
       className="main-deck"
       onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDraggingOver(true);
+      }}
+      onDragLeave={() => setIsDraggingOver(false)}
       style={{
         border: isDraggingOver ? '2px dashed #5f9ea0' : '2px dashed transparent',
         transition: 'border 0.2s ease',
@@ -78,11 +66,47 @@ export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds, set
 
         <div className="type-counter">
           <Stack direction="row" spacing={1}>
-            <Button sx={{ backgroundColor: '#ac9f27ff', color: 'white' }}>0</Button>
-            <Button sx={{ backgroundColor: '#c56c14ff', color: 'white' }}>0</Button>
-            <Button sx={{ backgroundColor: '#095492ff', color: 'white' }}>0</Button>
-            <Button sx={{ backgroundColor: '#1e9f3eff', color: 'white' }}>0</Button>
-            <Button sx={{ backgroundColor: '#e91e63', color: 'white' }}>0</Button>
+            <Button sx={{ backgroundColor: '#ac9f27ff', color: 'white' }}>
+              {
+                mainDeckCards.filter(
+                  (card) =>
+                    !card.type?.toLowerCase().includes('effect') &&
+                    card.type?.toLowerCase().includes('monster') &&
+                    !card.type?.toLowerCase().includes('ritual')
+                ).length
+              }
+            </Button>
+            <Button sx={{ backgroundColor: '#c56c14ff', color: 'white' }}>
+              {
+                mainDeckCards.filter(
+                  (card) =>
+                    card.type?.toLowerCase().includes('effect') &&
+                    card.type?.toLowerCase().includes('monster') &&
+                    !card.type?.toLowerCase().includes('ritual')
+                ).length
+              }
+            </Button>
+            <Button sx={{ backgroundColor: '#095492ff', color: 'white' }}>
+              {
+                mainDeckCards.filter((card) =>
+                  card.type?.toLowerCase().includes('ritual')
+                ).length
+              }
+            </Button>
+            <Button sx={{ backgroundColor: '#1e9f3eff', color: 'white' }}>
+              {
+                mainDeckCards.filter((card) =>
+                  card.type?.toLowerCase().includes('spell')
+                ).length
+              }
+            </Button>
+            <Button sx={{ backgroundColor: '#e91e63', color: 'white' }}>
+              {
+                mainDeckCards.filter((card) =>
+                  card.type?.toLowerCase().includes('trap')
+                ).length
+              }
+            </Button>
           </Stack>
         </div>
       </div>
@@ -93,19 +117,17 @@ export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds, set
             key={`${card.id}-${index}`}
             src={card.card_images?.[0]?.image_url_small}
             alt={card.name}
+            className="deck-card-entry"
             draggable
             onDragStart={(e) =>
-              e.dataTransfer.setData("text/plain", String(card.id))
+              e.dataTransfer.setData('text/plain', String(card.id))
             }
             onDoubleClick={() => removeCard(card.id)}
             onContextMenu={(e) => {
               e.preventDefault();
               addCard(String(card.id));
             }}
-            onClick={() => {
-              setCurrentCard(card);
-              console.log("Clicked card:", card);
-            }}
+            onClick={() => setCurrentCard(card)}
             style={{
               width: '100%',
               height: '100%',

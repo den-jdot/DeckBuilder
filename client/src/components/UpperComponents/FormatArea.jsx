@@ -25,14 +25,25 @@ export default function FormatArea({
   currentFormat,
   setCurrentFormat,
   currentDeck,
-  setCurrentDeck
+  setCurrentDeck,
 }) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [showNoDecksAlert, setShowNoDecksAlert] = React.useState(false);
 
-  const currentFormatObj = format.find(f => f.name === currentFormat);
+  const currentFormatObj = Array.isArray(format)
+    ? format.find(f => f.name === currentFormat)
+    : null;
+
+    // console.log("FormatList:", format);
+    // console.log("Current Format Name:", currentFormat);
+    // console.log("Matched Format Object:", currentFormatObj);
+
+  if (!currentFormatObj) {
+    return <p style={{ color: 'white' }}>Loading format data...</p>;
+  }
+
   const deckNames = currentFormatObj?.decks ? Object.keys(currentFormatObj.decks) : [];
 
   React.useEffect(() => {
@@ -46,7 +57,7 @@ export default function FormatArea({
     const selectedFormat = event.target.value;
     setCurrentFormat(selectedFormat);
 
-    const formatObj = format.find(f => f.name === selectedFormat);
+    const formatObj = format.find((f) => f.name === selectedFormat);
     const firstDeck = formatObj?.decks ? Object.keys(formatObj.decks)[0] : "";
     setCurrentDeck(firstDeck);
   };
@@ -62,7 +73,7 @@ export default function FormatArea({
       setShowNoDecksAlert(true);
       return;
     }
-    setOpen(prevOpen => !prevOpen);
+    setOpen((prevOpen) => !prevOpen);
   };
 
   const handleClose = (event) => {
@@ -82,9 +93,9 @@ export default function FormatArea({
               onChange={handleFormatChange}
               inputProps={{ name: 'format', id: 'format-select' }}
             >
-              {format.map(fmt => (
-                <option key={fmt.name ?? fmt} value={fmt.name ?? fmt}>
-                  {fmt.name ?? fmt}
+              {format.map((fmt) => (
+                <option key={fmt.name} value={fmt.name}>
+                  {fmt.name}
                 </option>
               ))}
             </NativeSelect>

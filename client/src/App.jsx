@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 
 import UpperArea from './components/UpperArea/UpperArea.jsx';
@@ -7,12 +7,11 @@ import DeckArea from './components/DeckArea/DeckArea.jsx';
 import TrunkArea from './components/TrunkArea/TrunkArea.jsx';
 
 function App() {
-  // === Card and deck state ===
-  const [cards, setCards] = useState(() => ({}));
-  const [currentDeckIds, setCurrentDeckIds] = useState([]); // array of card IDs
+  // Card and UI state
+  const [cards, setCards] = useState({});
   const [currentCard, setCurrentCard] = useState(null);
 
-  // === Format handling ===
+  // Format and deck metadata
   const DEFAULT_FORMATS = [
     { name: "TenguPlant", decks: {} },
     { name: "Edison", decks: {} },
@@ -47,13 +46,18 @@ function App() {
   });
 
   const [deckNameInput, setDeckNameInput] = useState(currentDeck);
+  const [currentDeckData, setCurrentDeckData] = useState({
+    main: [],
+    extra: [],
+    side: [],
+  });
 
-  // === Sync deck name input when current deck changes ===
+  // Sync deckNameInput when deck changes
   useEffect(() => {
     setDeckNameInput(currentDeck);
   }, [currentDeck]);
 
-  // === Persist to localStorage ===
+  // Persist state
   useEffect(() => {
     localStorage.setItem('format', JSON.stringify(format));
   }, [format]);
@@ -66,42 +70,56 @@ function App() {
     localStorage.setItem('currentDeck', currentDeck);
   }, [currentDeck]);
 
-  useEffect(() => {
-  if (!currentDeck || !currentFormat) return;
-
-  setFormat((prevFormats) =>
-    prevFormats.map((f) => {
-      if (f.name !== currentFormat) return f;
-
-      return {
-        ...f,
-        decks: {
-          ...f.decks,
-          [currentDeck]: [...currentDeckIds], // overwrite the saved version
-        },
-      };
-    })
-  );
-  }, [currentDeckIds]);
-
+  // Save deck data into format object
   useEffect(() => {
     if (!currentDeck || !currentFormat) return;
 
+    setFormat((prevFormats) =>
+      prevFormats.map((f) =>
+        f.name === currentFormat
+          ? { ...f, decks: { ...f.decks, [currentDeck]: { ...currentDeckData } } }
+          : f
+      )
+    );
+  }, [currentDeckData]);
+
+  // Load deck from saved format
+  useEffect(() => {
+    if (!currentDeck || !currentFormat) return;
     const formatObj = format.find((f) => f.name === currentFormat);
     if (!formatObj) return;
 
     const savedDeck = formatObj.decks?.[currentDeck];
-    if (Array.isArray(savedDeck)) {
-      setCurrentDeckIds(savedDeck);
-    } else {
-      setCurrentDeckIds([]); // If deck doesn't exist yet, start empty
-    }
+    setCurrentDeckData(
+    savedDeck && typeof savedDeck === 'object'
+      ? {
+          main: Array.isArray(savedDeck.main) ? savedDeck.main : [],
+          extra: Array.isArray(savedDeck.extra) ? savedDeck.extra : [],
+          side: Array.isArray(savedDeck.side) ? savedDeck.side : [],
+        }
+      : { main: [], extra: [], side: [] }
+  );
+
   }, [currentDeck, currentFormat]);
 
-  // === Debug log ===
-  useEffect(() => {
-    console.log("Cards updated in App:", Object.keys(cards));
-  }, [cards]);
+  // === Card Adding Handlers ===
+  const countCopies = (zone, id) => currentDeckData[zone].filter((x) => x === id).length;
+
+  const addCardToDeck = (zone, id) => {
+    if (!cards[id]) return;
+
+    const maxPerCard = 3;
+    const maxSizes = { main: 60, extra: 15, side: 15 };
+    const currentZone = currentDeckData[zone];
+
+    if (currentZone.length >= maxSizes[zone]) return;
+    if (countCopies(zone, id) >= maxPerCard) return;
+
+    setCurrentDeckData((prev) => ({
+      ...prev,
+      [zone]: [...prev[zone], id],
+    }));
+  };
 
   return (
     <main>
@@ -116,42 +134,30 @@ function App() {
         setDeckNameInput={setDeckNameInput}
         cards={cards}
         setCurrentCard={setCurrentCard}
-        currentDeckIds={currentDeckIds}
-        setCurrentDeckIds={setCurrentDeckIds}
+        currentDeckData={currentDeckData}
+        setCurrentDeckData={setCurrentDeckData}
       />
 
       <div className="main-app">
         <CardArea currentCard={currentCard} />
 
         <DeckArea
-          format={format}
-          setFormat={setFormat}
           currentFormat={currentFormat}
-          setCurrentFormat={setCurrentFormat}
           currentDeck={currentDeck}
           setCurrentDeck={setCurrentDeck}
-          deckNameInput={deckNameInput}
-          setDeckNameInput={setDeckNameInput}
           cards={cards}
           setCurrentCard={setCurrentCard}
-          currentDeckIds={currentDeckIds}
-          setCurrentDeckIds={setCurrentDeckIds}
+          currentDeckData={currentDeckData}
+          setCurrentDeckData={setCurrentDeckData}
         />
 
         <TrunkArea
-          format={format}
-          setFormat={setFormat}
-          currentFormat={currentFormat}
-          setCurrentFormat={setCurrentFormat}
-          currentDeck={currentDeck}
-          setCurrentDeck={setCurrentDeck}
-          deckNameInput={deckNameInput}
-          setDeckNameInput={setDeckNameInput}
           cards={cards}
           setCards={setCards}
           setCurrentCard={setCurrentCard}
-          currentDeckIds={currentDeckIds}
-          setCurrentDeckIds={setCurrentDeckIds}
+          addToMainDeck={(id) => addCardToDeck('main', id)}
+          addToExtraDeck={(id) => addCardToDeck('extra', id)}
+          addToSideDeck={(id) => addCardToDeck('side', id)}
         />
       </div>
     </main>
