@@ -10,6 +10,8 @@ export default function TrunkArea({
   addToMainDeck,
   addToExtraDeck,
   addToSideDeck,
+  addCard,
+  currentDeckData,
 }) {
   // Local state for internal card display
   const [cardMap, setCardMap] = useState({});
@@ -74,6 +76,8 @@ export default function TrunkArea({
         addToMainDeck={addToMainDeck}
         addToExtraDeck={addToExtraDeck}
         addToSideDeck={addToSideDeck}
+        addCard={addCard}
+        currentDeckData={currentDeckData}
       />
       <TrunkNav
         currentPage={currentPage}

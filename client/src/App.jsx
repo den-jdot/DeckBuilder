@@ -99,27 +99,99 @@ function App() {
         }
       : { main: [], extra: [], side: [] }
   );
-
   }, [currentDeck, currentFormat]);
 
-  // === Card Adding Handlers ===
-  const countCopies = (zone, id) => currentDeckData[zone].filter((x) => x === id).length;
+  // Function to add a card to the current deck
+  // const addCardToDeck = (zone, id) => {
+  //   if (!cards[id]) return;
 
-  const addCardToDeck = (zone, id) => {
-    if (!cards[id]) return;
+  //   const maxPerCard = 3;
+  //   const maxSizes = { main: 60, extra: 15, side: 15 };
+  //   const currentZone = currentDeckData[zone];
 
-    const maxPerCard = 3;
-    const maxSizes = { main: 60, extra: 15, side: 15 };
-    const currentZone = currentDeckData[zone];
+  //   if (currentZone.length >= maxSizes[zone]) return;
+  //   if (countCopies(zone, id) >= maxPerCard) return;
 
-    if (currentZone.length >= maxSizes[zone]) return;
-    if (countCopies(zone, id) >= maxPerCard) return;
+  //   setCurrentDeckData((prev) => ({
+  //     ...prev,
+  //     [zone]: [...prev[zone], id],
+  //   }));
+  // };
+
+  const EXTRA_DECK_TYPES = [
+    'Fusion',
+    'Synchro',
+    'XYZ',
+    'Link',
+    'Synchro Pendulum',
+    'Fusion Pendulum',
+    'XYZ Pendulum',
+  ];
+
+  const isExtraType = (card) =>
+    EXTRA_DECK_TYPES.some((type) =>
+      card?.type?.toLowerCase().includes(type.toLowerCase())
+    );
+
+  const countCopies = (id) => (
+    currentDeckData.main.filter((x) => x === id).length +
+    currentDeckData.extra.filter((x) => x === id).length +
+    currentDeckData.side.filter((x) => x === id).length
+  );
+
+  const totalCountOf = (predicate) => (
+    currentDeckData.main.filter((id) => predicate(cards[String(id)])).length +
+    currentDeckData.extra.filter((id) => predicate(cards[String(id)])).length +
+    currentDeckData.side.filter((id) => predicate(cards[String(id)])).length
+  );
+
+  const addCard = (id, zone) => {
+    const card = cards[String(id)];
+    if (!card) return;
+
+    const totalCopies = countCopies(id);
+    if (totalCopies >= 3) {
+      console.log('Maximum 3 copies allowed.');
+      return;
+    }
+
+    const mainDeckCount = totalCountOf((c) => !isExtraType(c));
+    const extraDeckCount = totalCountOf((c) => isExtraType(c));
+    const sideDeckCount = totalCountOf(() => true) - mainDeckCount - extraDeckCount;
+
+    if (zone === 'main') {
+      if (isExtraType(card)) {
+        console.log('Card is Extra Deck type, cannot add to Main Deck.');
+        return;
+      }
+      if (mainDeckCount >= 60) {
+        console.log('Main Deck is full (60 cards max).');
+        return;
+      }
+    } else if (zone === 'extra') {
+      if (!isExtraType(card)) {
+        console.log('Card is not an Extra Deck type.');
+        return;
+      }
+      if (extraDeckCount >= 15) {
+        console.log('Extra Deck is full (15 cards max).');
+        return;
+      }
+    } else if (zone === 'side') {
+      if (sideDeckCount >= 15) {
+        console.log('Side Deck is full (15 cards max).');
+        return;
+      }
+    }
 
     setCurrentDeckData((prev) => ({
       ...prev,
       [zone]: [...prev[zone], id],
     }));
+    console.log(`Added card ${id} to ${zone} deck.`);
   };
+
+
 
   return (
     <main>
@@ -149,15 +221,16 @@ function App() {
           setCurrentCard={setCurrentCard}
           currentDeckData={currentDeckData}
           setCurrentDeckData={setCurrentDeckData}
+          addCard={addCard}
         />
 
         <TrunkArea
           cards={cards}
           setCards={setCards}
           setCurrentCard={setCurrentCard}
-          addToMainDeck={(id) => addCardToDeck('main', id)}
-          addToExtraDeck={(id) => addCardToDeck('extra', id)}
-          addToSideDeck={(id) => addCardToDeck('side', id)}
+          addCard={addCard}
+          currentDeckData={currentDeckData}
+          setCurrentDeckData={setCurrentDeckData}
         />
       </div>
     </main>

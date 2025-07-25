@@ -113,7 +113,7 @@ main {
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin: 0.05rem;
+  /* margin: 0.05rem; */
 }
 
 .card-area {
@@ -126,7 +126,7 @@ main {
 }
 
 .trunk-area, .card-area {
-  flex: 0 0 22%;
+  flex: 0 0 22.10%;
 } 
 
 .trunk-area {

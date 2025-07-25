@@ -2,9 +2,9 @@ export default function TrunkListing({
   cardMap,
   visibleIds,
   setCurrentCard,
-  addToMainDeck,
-  addToExtraDeck,
-  addToSideDeck,
+  addCard,
+  currentDeckData,
+  setCurrentDeckData,
 }) {
   const EXTRA_DECK_TYPES = [
     'Fusion',
@@ -25,11 +25,8 @@ export default function TrunkListing({
     const card = cardMap[String(id)];
     if (!card) return;
 
-    if (isExtraType(card)) {
-      addToExtraDeck(id);
-    } else {
-      addToMainDeck(id);
-    }
+    const zone = isExtraType(card) ? 'extra' : 'main';
+    addCard(id, zone);
   };
 
   return (
