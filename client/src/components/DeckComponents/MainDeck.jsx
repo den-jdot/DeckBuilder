@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 
-export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds }) {
+export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds, setCurrentCard, currentFormat }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   // Build list of card objects from IDs (skip missing)
@@ -100,8 +100,8 @@ export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds }) {
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(10, 1fr)',
-          gap: '4px',
-          marginTop: '12px',
+          gap: '2px',
+          // marginTop: '12px',
         }}
       >
         {mainDeckCards.map((card, index) => (
@@ -117,6 +117,10 @@ export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds }) {
             onContextMenu={(e) => {
               e.preventDefault();
               addCard(String(card.id));
+            }}
+            onClick={() => {
+              setCurrentCard(card);
+              console.log("Clicked card:", card);
             }}
             style={{
               width: '100%',

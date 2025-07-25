@@ -10,7 +10,10 @@ export default function TrunkListing({ cardMap, setCurrentCard, visibleIds }) {
             key={card.id}
             className="card-entry"
             draggable
-            onClick={() => setCurrentCard(card)}
+            onClick={() => {
+              setCurrentCard(card);
+              console.log("Clicked card:", card);
+            }}
             onDragStart={(e) => e.dataTransfer.setData('text/plain', card.id)}
             style={{ cursor: 'grab' }}
           >

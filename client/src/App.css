@@ -203,7 +203,6 @@ main {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   gap: 6px;
-  padding: 10px 0;
 }
 
 .deck-card img {
