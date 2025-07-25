@@ -1,21 +1,27 @@
-export default function TrunkListing({ cards, setCurrentCard }) {
+export default function TrunkListing({ cardMap, setCurrentCard, visibleIds }) {
   return (
     <div className="trunk-listing">
-      {cards.map((card) => (
-        <div
-          key={card.id}
-          className="card-entry"
-          onClick={() => setCurrentCard(card)}
-          style={{ cursor: 'pointer' }}
-        >
-          <img
-            src={card.card_images?.[0]?.image_url_small}
-            alt={card.name}
-            className="card-image"
-          />
-          {/* <p className="card-name">{card.name}</p> */}
-        </div>
-      ))}
+      {visibleIds.map((id) => {
+        const card = cardMap[id];
+        if (!card) return null;
+
+        return (
+          <div
+            key={card.id}
+            className="card-entry"
+            draggable
+            onClick={() => setCurrentCard(card)}
+            onDragStart={(e) => e.dataTransfer.setData('text/plain', card.id)}
+            style={{ cursor: 'grab' }}
+          >
+            <img
+              src={card.card_images?.[0]?.image_url_small}
+              alt={card.name}
+              className="card-image"
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }

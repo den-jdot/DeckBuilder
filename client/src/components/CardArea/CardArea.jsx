@@ -3,7 +3,7 @@ export default function CardArea({ currentCard }) {
     <div className="card-area">
       {currentCard ? (
         <>
-          <h2>{currentCard.name}</h2>
+          {/* <h2>{currentCard.name}</h2> */}
           <img src={currentCard.card_images?.[0]?.image_url} alt={currentCard.name} />
           <p>Type: {currentCard.type}</p>
           <p>Desc: {currentCard.desc}</p>
