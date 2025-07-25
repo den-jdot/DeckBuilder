@@ -5,12 +5,10 @@ import Button from '@mui/material/Button';
 export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds, setCurrentCard, currentFormat }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
-  // Build list of card objects from IDs (skip missing)
   const mainDeckCards = currentDeckIds
     .map((id) => cards[String(id)])
     .filter(Boolean);
 
-  // Logic helper: enforce max 60 cards and 3 duplicates
   const canAddCard = (id) => {
     const count = currentDeckIds.filter((x) => x === id).length;
     if (currentDeckIds.length >= 60) {
@@ -24,7 +22,6 @@ export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds, set
     return true;
   };
 
-  // Handle adding card via drag-and-drop or right-click
   const addCard = (id) => {
     if (!canAddCard(id)) return;
     setCurrentDeckIds((prev) => [...prev, id]);
@@ -32,18 +29,15 @@ export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds, set
   };
 
   const removeCard = (idToRemove) => {
-    console.log("Removing:", idToRemove);
     setCurrentDeckIds((prev) => {
       const index = prev.findIndex((id) => String(id) === String(idToRemove));
       if (index === -1) return prev;
-
       const newDeck = [...prev];
       newDeck.splice(index, 1);
       return newDeck;
     });
   };
 
-  // === Drag Handlers ===
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDraggingOver(false);
@@ -60,7 +54,6 @@ export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds, set
     setIsDraggingOver(false);
   };
 
-  // === Render ===
   return (
     <div
       className="main-deck"
@@ -70,7 +63,6 @@ export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds, set
       style={{
         border: isDraggingOver ? '2px dashed #5f9ea0' : '2px dashed transparent',
         transition: 'border 0.2s ease',
-        minHeight: '200px',
         boxSizing: 'border-box',
       }}
     >
@@ -95,15 +87,7 @@ export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds, set
         </div>
       </div>
 
-      <div
-        className="deck-card-grid"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(10, 1fr)',
-          gap: '2px',
-          // marginTop: '12px',
-        }}
-      >
+      <div className="deck-card-grid">
         {mainDeckCards.map((card, index) => (
           <img
             key={`${card.id}-${index}`}
@@ -124,7 +108,9 @@ export default function MainDeck({ cards, currentDeckIds, setCurrentDeckIds, set
             }}
             style={{
               width: '100%',
-              maxWidth: '60px',
+              height: '100%',
+              maxWidth: '80px',
+              objectFit: 'contain',
               cursor: 'pointer',
             }}
             title="Double-click to remove / Right-click to add duplicate"

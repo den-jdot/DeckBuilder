@@ -78,6 +78,8 @@ export default function TrunkArea({
         cardMap={cardMap}
         visibleIds={visibleIds}
         setCurrentCard={setCurrentCard}
+        currentDeckIds={currentDeckIds}
+        setCurrentDeckIds={setCurrentDeckIds}
       />
       <TrunkNav
         currentPage={currentPage}
