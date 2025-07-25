@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 export default function TrunkListing({
   cardMap,
   visibleIds,
@@ -6,6 +8,8 @@ export default function TrunkListing({
   currentDeckData,
   setCurrentDeckData,
 }) {
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+
   const EXTRA_DECK_TYPES = [
     'Fusion',
     'Synchro',
@@ -22,6 +26,7 @@ export default function TrunkListing({
     );
 
   const handleAdd = (id) => {
+
     const card = cardMap[String(id)];
     if (!card) return;
 
@@ -29,8 +34,51 @@ export default function TrunkListing({
     addCard(id, zone);
   };
 
+const removeCard = (idToRemove) => {
+  setCurrentDeckData((prev) => {
+    const removeFrom = (zoneArray) => {
+      const index = zoneArray.findIndex((id) => String(id) === String(idToRemove));
+      if (index !== -1) {
+        const copy = [...zoneArray];
+        copy.splice(index, 1);
+        return copy;
+      }
+      return zoneArray;
+    };
+
+    return {
+      main: removeFrom(prev.main),
+      extra: removeFrom(prev.extra),
+      side: removeFrom(prev.side),
+    };
+  });
+
+  console.log(`Removed card ${idToRemove} from deck by dropping into trunk.`);
+};
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDraggingOver(false);
+    const droppedId = e.dataTransfer.getData('text/plain');
+    if (droppedId) {
+      removeCard(droppedId);
+    }
+  };
+
   return (
-    <div className="trunk-listing">
+    <div
+      className="trunk-listing"
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDraggingOver(true);
+      }}
+      onDragLeave={() => setIsDraggingOver(false)}
+      onDrop={handleDrop}
+      style={{
+        backgroundColor: isDraggingOver ? '#eef' : 'transparent',
+        transition: 'background-color 0.2s',
+      }}
+    >
       {visibleIds.map((id) => {
         const card = cardMap[id];
         if (!card) return null;

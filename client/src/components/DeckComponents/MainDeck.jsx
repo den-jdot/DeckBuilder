@@ -36,7 +36,7 @@ export default function MainDeck({
     e.preventDefault();
     setIsDraggingOver(false);
     const droppedId = String(e.dataTransfer.getData('text/plain'));
-    if (droppedId) addCard(droppedId);
+    if (droppedId) addCard(droppedId, 'main');
   };
 
   return (
@@ -122,10 +122,10 @@ export default function MainDeck({
             onDragStart={(e) =>
               e.dataTransfer.setData('text/plain', String(card.id))
             }
-            onDoubleClick={() => removeCard(card.id)}
+            onDoubleClick={() => addCard(String(card.id))}
             onContextMenu={(e) => {
               e.preventDefault();
-              addCard(String(card.id));
+              removeCard(card.id);
             }}
             onClick={() => setCurrentCard(card)}
             style={{

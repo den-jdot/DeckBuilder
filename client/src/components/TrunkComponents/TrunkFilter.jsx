@@ -1,13 +1,18 @@
 import { useState } from 'react'
 
 
-export default function TrunkFilter() {
+export default function TrunkFilter({ nameFilter, setNameFilter }) {
 
   return (
     <>
         <div className="trunk-filter">
-            <h2>Trunk Filter</h2>
-            <p>This is where you can filter your trunk items.</p>
+            <input
+              type="text"
+              placeholder="Search by name"
+              value={nameFilter}
+              onChange={(e) => setNameFilter(e.target.value)}
+              style={{ marginBottom: '10px', width: '100%' }}
+            />
         </div>
     </>
   )

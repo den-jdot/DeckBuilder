@@ -12,6 +12,7 @@ export default function TrunkArea({
   addToSideDeck,
   addCard,
   currentDeckData,
+  setCurrentDeckData
 }) {
   // Local state for internal card display
   const [cardMap, setCardMap] = useState({});
@@ -62,13 +63,16 @@ export default function TrunkArea({
     }
   };
 
+  //Filter state for trunk listing
+  const [nameFilter, setNameFilter] = useState("");
+
   return (
     <div
       className="trunk-area"
       onDragOver={(e) => e.preventDefault()}
       onDrop={handleDrop}
     >
-      <TrunkFilter />
+      <TrunkFilter nameFilter={nameFilter} setNameFilter={setNameFilter} />
       <TrunkListing
         cardMap={cards}
         visibleIds={visibleIds}
@@ -78,6 +82,9 @@ export default function TrunkArea({
         addToSideDeck={addToSideDeck}
         addCard={addCard}
         currentDeckData={currentDeckData}
+        setCurrentDeckData={setCurrentDeckData}
+        nameFilter={nameFilter}
+        setNameFilter={setNameFilter}
       />
       <TrunkNav
         currentPage={currentPage}
