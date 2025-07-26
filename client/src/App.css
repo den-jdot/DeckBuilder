@@ -32,6 +32,7 @@ main {
   justify-content: flex-start;
   overflow: hidden;
   padding: 0.25rem;
+  gap: 0.05rem;
 }
 
 .left-app {
@@ -64,6 +65,7 @@ main {
   display: flex;
   flex-direction: row;
   align-self: flex-start;
+  min-height: min-content;
 }
 
 .format-area {
