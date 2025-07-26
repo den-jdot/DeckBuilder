@@ -209,34 +209,42 @@ function App() {
 
   return (
     <main>
-      <UpperArea
-        format={format}
-        setFormat={setFormat}
-        currentFormat={currentFormat}
-        setCurrentFormat={setCurrentFormat}
-        currentDeck={currentDeck}
-        setCurrentDeck={setCurrentDeck}
-        deckNameInput={deckNameInput}
-        setDeckNameInput={setDeckNameInput}
-        cards={cards}
-        setCurrentCard={setCurrentCard}
-        currentDeckData={currentDeckData}
-        setCurrentDeckData={setCurrentDeckData}
-      />
-
       <div className="main-app">
-        <CardArea currentCard={currentCard} />
+        <div className="left-app">
+          <UpperArea
+            format={format}
+            setFormat={setFormat}
+            currentFormat={currentFormat}
+            setCurrentFormat={setCurrentFormat}
+            currentDeck={currentDeck}
+            setCurrentDeck={setCurrentDeck}
+            deckNameInput={deckNameInput}
+            setDeckNameInput={setDeckNameInput}
+            cards={cards}
+            setCurrentCard={setCurrentCard}
+            currentDeckData={currentDeckData}
+            setCurrentDeckData={setCurrentDeckData}
+          />
 
-        <DeckArea
-          currentFormat={currentFormat}
-          currentDeck={currentDeck}
-          setCurrentDeck={setCurrentDeck}
-          cards={cards}
-          setCurrentCard={setCurrentCard}
-          currentDeckData={currentDeckData}
-          setCurrentDeckData={setCurrentDeckData}
-          addCard={addCard}
-        />
+          <div className="lower-app">
+
+            <CardArea currentCard={currentCard} />
+
+            <DeckArea
+              currentFormat={currentFormat}
+              currentDeck={currentDeck}
+              setCurrentDeck={setCurrentDeck}
+              cards={cards}
+              setCurrentCard={setCurrentCard}
+              currentDeckData={currentDeckData}
+              setCurrentDeckData={setCurrentDeckData}
+              addCard={addCard}
+            />
+          </div>
+
+        </div>
+
+      
 
         <TrunkArea
           cards={cards}
@@ -247,7 +255,9 @@ function App() {
           setCurrentDeckData={setCurrentDeckData}
           currentFormat={currentFormat}
         />
+
       </div>
+      
     </main>
   );
 }

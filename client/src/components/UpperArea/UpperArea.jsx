@@ -39,7 +39,7 @@ export default function UpperArea({
         setCurrentDeckData={setCurrentDeckData}
       />
 
-      <MiscArea />
+      {/* <MiscArea /> */}
     </div>
   );
 }

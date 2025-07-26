@@ -119,19 +119,22 @@ export default function MainDeck({
             alt={card.name}
             className="deck-card-entry"
             draggable
-            onDragStart={(e) =>
-              e.dataTransfer.setData('text/plain', String(card.id))
-            }
+            onDragStart={(e) => {
+              e.dataTransfer.setData('text/plain', String(card.id));
+            }}
             onDoubleClick={() => addCard(String(card.id))}
             onContextMenu={(e) => {
               e.preventDefault();
               removeCard(card.id);
             }}
-            onClick={() => setCurrentCard(card)}
+            onClick={() => {
+              setCurrentCard(card);
+              console.log('Clicked card:', card);
+            }}
             style={{
               width: '100%',
               height: '100%',
-              maxWidth: '80px',
+              maxWidth: '120px',
               objectFit: 'contain',
               cursor: 'pointer',
             }}
