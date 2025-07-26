@@ -64,6 +64,7 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('currentFormat', currentFormat);
+    console.log(`Current format set to: ${currentFormat}`);
   }, [currentFormat]);
 
   useEffect(() => {
@@ -145,22 +146,22 @@ function App() {
     currentDeckData.side.filter((id) => predicate(cards[String(id)])).length
   );
 
-  const inFlightAddRef = useRef({}); // key: id, value: timestamp
+  // const inFlightAddRef = useRef({}); // key: id, value: timestamp
 
   const addCard = (id, zone) => {
     const card = cards[String(id)];
     if (!card) return;
 
-    const now = Date.now();
-    const lastAddTime = inFlightAddRef.current[id] || 0;
+    // const now = Date.now();
+    // const lastAddTime = inFlightAddRef.current[id] || 0;
 
-    // Prevent repeated adds within 200ms
-    if (now - lastAddTime < 200) {
-      console.log(`Prevented rapid duplicate add of ${id}`);
-      return;
-    }
+    // // Prevent repeated adds within 200ms
+    // if (now - lastAddTime < 200) {
+    //   console.log(`Prevented rapid duplicate add of ${id}`);
+    //   return;
+    // }
 
-    inFlightAddRef.current[id] = now;
+    // inFlightAddRef.current[id] = now;
 
     const totalCopies = countCopies(id);
     if (totalCopies >= 3) {
@@ -244,6 +245,7 @@ function App() {
           addCard={addCard}
           currentDeckData={currentDeckData}
           setCurrentDeckData={setCurrentDeckData}
+          currentFormat={currentFormat}
         />
       </div>
     </main>

@@ -7,30 +7,60 @@ export default function TrunkArea({
   cards,
   setCards,
   setCurrentCard,
-  addToMainDeck,
-  addToExtraDeck,
-  addToSideDeck,
   addCard,
   currentDeckData,
-  setCurrentDeckData
+  setCurrentDeckData,
+  currentFormat,
 }) {
   // Local state for internal card display
   const [cardMap, setCardMap] = useState({});
   const [cardIds, setCardIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
 
+  // Filter state for trunk listing
+  const [nameFilter, setNameFilter] = useState("");  
+
   // Pagination setup
   const cardsPerPage = 30;
   const start = currentPage * cardsPerPage;
   const end = start + cardsPerPage;
-  const visibleIds = cardIds.slice(start, end);
-  const maxPages = Math.ceil(cardIds.length / cardsPerPage);
+
+  const filteredIds = cardIds.filter((id) => {
+    const card = cardMap[id];
+
+    // Reject if no card (edge case)
+    if (!card) return false;
+
+    // Name filter
+    if (!card.name.toLowerCase().includes(nameFilter.toLowerCase())) return false;
+
+    // // Type filter (example: "Monster", "Spell", etc.)
+    // if (typeFilter && !card.type.toLowerCase().includes(typeFilter.toLowerCase())) return false;
+
+    // // Attribute filter (like "DARK", "LIGHT", etc.)
+    // if (attributeFilter && card.attribute !== attributeFilter) return false;
+
+    // // Level filter
+    // if (minLevel && card.level < minLevel) return false;
+    // if (maxLevel && card.level > maxLevel) return false;
+
+    // // ATK/DEF filter
+    // if (minATK && card.atk < minATK) return false;
+    // if (maxATK && card.atk > maxATK) return false;
+
+    return true; // Only include cards passing all checks
+  });
+
+  const visibleIds = filteredIds.slice(start, end);
+  const maxPages = Math.ceil(filteredIds.length / cardsPerPage);
+
+
 
   // Fetch card data from local JSON
   useEffect(() => {
     const fetchCards = async () => {
       try {
-        const res = await fetch('/cards/TenguPlant.json');
+        const res = await fetch(`/cards/${currentFormat}.json`);
         const data = await res.json();
 
         const byId = {};
@@ -51,7 +81,7 @@ export default function TrunkArea({
     };
 
     fetchCards();
-  }, [setCards]);
+  }, [setCards, currentFormat]);
 
   // Allow dropping cards back from decks to trunk
   const handleDrop = (e) => {
@@ -63,8 +93,9 @@ export default function TrunkArea({
     }
   };
 
-  //Filter state for trunk listing
-  const [nameFilter, setNameFilter] = useState("");
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [nameFilter]);
 
   return (
     <div
@@ -77,9 +108,6 @@ export default function TrunkArea({
         cardMap={cards}
         visibleIds={visibleIds}
         setCurrentCard={setCurrentCard}
-        addToMainDeck={addToMainDeck}
-        addToExtraDeck={addToExtraDeck}
-        addToSideDeck={addToSideDeck}
         addCard={addCard}
         currentDeckData={currentDeckData}
         setCurrentDeckData={setCurrentDeckData}

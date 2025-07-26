@@ -7,6 +7,8 @@ export default function TrunkListing({
   addCard,
   currentDeckData,
   setCurrentDeckData,
+  nameFilter,
+  setNameFilter,
 }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 

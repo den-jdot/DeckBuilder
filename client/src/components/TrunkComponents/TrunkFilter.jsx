@@ -10,7 +10,9 @@ export default function TrunkFilter({ nameFilter, setNameFilter }) {
               type="text"
               placeholder="Search by name"
               value={nameFilter}
-              onChange={(e) => setNameFilter(e.target.value)}
+              onChange={(e) => {setNameFilter(e.target.value);
+                // console.log("Filter updated:", e.target.value);
+              }}
               style={{ marginBottom: '10px', width: '100%' }}
             />
         </div>
