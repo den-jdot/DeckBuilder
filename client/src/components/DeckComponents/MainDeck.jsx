@@ -70,9 +70,9 @@ export default function MainDeck({
               {
                 mainDeckCards.filter(
                   (card) =>
-                    !card.type?.toLowerCase().includes('effect') &&
-                    card.type?.toLowerCase().includes('monster') &&
-                    !card.type?.toLowerCase().includes('ritual')
+                    !card.humanReadableCardType?.toLowerCase().includes('effect') &&
+                    card.humanReadableCardType?.toLowerCase().includes('monster') &&
+                    !card.humanReadableCardType?.toLowerCase().includes('ritual')
                 ).length
               }
             </Button>
@@ -80,30 +80,30 @@ export default function MainDeck({
               {
                 mainDeckCards.filter(
                   (card) =>
-                    card.type?.toLowerCase().includes('effect') &&
-                    card.type?.toLowerCase().includes('monster') &&
-                    !card.type?.toLowerCase().includes('ritual')
+                    card.humanReadableCardType?.toLowerCase().includes('effect') &&
+                    card.humanReadableCardType?.toLowerCase().includes('monster') &&
+                    !card.humanReadableCardType?.toLowerCase().includes('ritual')
                 ).length
               }
             </Button>
             <Button sx={{ backgroundColor: '#095492ff', color: 'white' }}>
               {
                 mainDeckCards.filter((card) =>
-                  card.type?.toLowerCase().includes('ritual')
+                  card.humanReadableCardType?.toLowerCase().includes('ritual')
                 ).length
               }
             </Button>
             <Button sx={{ backgroundColor: '#1e9f3eff', color: 'white' }}>
               {
                 mainDeckCards.filter((card) =>
-                  card.type?.toLowerCase().includes('spell')
+                  card.humanReadableCardType?.toLowerCase().includes('spell')
                 ).length
               }
             </Button>
             <Button sx={{ backgroundColor: '#e91e63', color: 'white' }}>
               {
                 mainDeckCards.filter((card) =>
-                  card.type?.toLowerCase().includes('trap')
+                  card.humanReadableCardType?.toLowerCase().includes('trap')
                 ).length
               }
             </Button>

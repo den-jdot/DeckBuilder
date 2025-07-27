@@ -78,28 +78,28 @@ export default function ExtraDeck({
             <Button sx={{ backgroundColor: '#9c27b0', color: 'white' }}>
               {
                 extraDeckCards.filter((card) =>
-                  card.type?.toLowerCase().includes('fusion')
+                  card.humanReadableCardType?.toLowerCase().includes('fusion')
                 ).length
               }
             </Button>
             <Button sx={{ backgroundColor: '#d0d0d0ff', color: 'black' }}>
               {
                 extraDeckCards.filter((card) =>
-                  card.type?.toLowerCase().includes('synchro')
+                  card.humanReadableCardType?.toLowerCase().includes('synchro')
                 ).length
               }
             </Button>
             <Button sx={{ backgroundColor: '#191919ff', color: 'white' }}>
               {
                 extraDeckCards.filter((card) =>
-                  card.type?.toLowerCase().includes('xyz')
+                  card.humanReadableCardType?.toLowerCase().includes('xyz')
                 ).length
               }
             </Button>
             <Button sx={{ backgroundColor: '#2196f3', color: 'white' }}>
               {
                 extraDeckCards.filter((card) =>
-                  card.type?.toLowerCase().includes('link')
+                  card.humanReadableCardType?.toLowerCase().includes('link')
                 ).length
               }
             </Button>
@@ -118,10 +118,10 @@ export default function ExtraDeck({
             onDragStart={(e) =>
               e.dataTransfer.setData('text/plain', String(card.id))
             }
-            onDoubleClick={() => removeCard(card.id)}
+            onDoubleClick={() => addCard(String(card.id))}
             onContextMenu={(e) => {
               e.preventDefault();
-              addCard(String(card.id));
+              removeCard(card.id);
             }}
             onClick={() => {
               setCurrentCard(card);

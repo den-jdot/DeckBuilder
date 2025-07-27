@@ -26,6 +26,16 @@ export default function TrunkFilter({
         />
 
         <select
+          value={cardTypeFilter}
+          onChange={(e) => setCardTypeFilter(e.target.value)}
+        >
+          <option value="">Card Type</option>
+          <option value="Monster">Monster</option>
+          <option value="Spell">Spell</option>
+          <option value="Trap">Trap</option>
+        </select>
+
+        <select
           value={attributeFilter}
           onChange={(e) => setAttributeFilter(e.target.value)}
         >
@@ -39,15 +49,6 @@ export default function TrunkFilter({
           <option value="DIVINE">DIVINE</option>
         </select>
 
-        <select
-          value={cardTypeFilter}
-          onChange={(e) => setCardTypeFilter(e.target.value)}
-        >
-          <option value="">Card Type</option>
-          <option value="Monster">Monster</option>
-          <option value="Spell">Spell</option>
-          <option value="Trap">Trap</option>
-        </select>
       </div>
 
       <div className="triple-trunk-filter-grid">

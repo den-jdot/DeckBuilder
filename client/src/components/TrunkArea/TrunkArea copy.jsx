@@ -32,91 +32,49 @@ export default function TrunkArea({
   const start = currentPage * cardsPerPage;
   const end = start + cardsPerPage;
 
-  const accepted = [];
-  const rejected = [];
-
-  for (const id of cardIds) {
+  const filteredIds = cardIds.filter((id) => {
     const card = cardMap[id];
-    if (!card) {
-      rejected.push({ id, reason: "Missing card data" });
-      continue;
-    }
 
-    // OLD NAME FILTER
-    // if (!card.name.toLowerCase().includes(nameFilter.toLowerCase())) {
-    //   rejected.push({ id, name: card.name, reason: "Name filter" });
-    //   continue;
-    // }
+    // Reject if no card (edge case)
+    if (!card) return false;
 
-    if (nameFilter) {
-      const terms = nameFilter.toLowerCase().split(/\s+/);
-      const cardName = card.name?.toLowerCase() ?? "";
-      const allTermsMatch = terms.every(term => cardName.includes(term));
-      if (!allTermsMatch) {
-        rejected.push({ id, name: card.name, reason: "Description filter" });
-        continue;
-      }
-    }
+    // Name filter
+    if (!card.name.toLowerCase().includes(nameFilter.toLowerCase())) return false;
 
+    // // Type filter (example: "Monster", "Spell", etc.)
+    // if (typeFilter && !card.type.toLowerCase().includes(typeFilter.toLowerCase())) return false;
+
+    // Desc filter (example: Effect Description)
     if (descFilter) {
-      const terms = descFilter.toLowerCase().split(/\s+/);
+      const terms = descFilter.toLowerCase().split(/\s+/); // split on whitespace
       const cardDesc = card.desc?.toLowerCase() ?? "";
+
       const allTermsMatch = terms.every(term => cardDesc.includes(term));
-      if (!allTermsMatch) {
-        rejected.push({ id, name: card.name, reason: "Description filter" });
-        continue;
-      }
+      if (!allTermsMatch) return false;
     }
 
-    // if (attributeFilter && card.attribute !== attributeFilter) {
-    //   rejected.push({ id, name: card.name, reason: "Attribute filter" });
-    //   continue;
-    // }
+    // // Attribute filter (like "DARK", "LIGHT", etc.)
+    // if (attributeFilter && card.attribute !== attributeFilter) return false;
 
-    if (levelFilter.min != null && card.level < levelFilter.min) {
-      rejected.push({ id, name: card.name, reason: `Level ${card.level} < min ${levelFilter.min}` });
-      continue;
-    }
-
-    if (levelFilter.max != null && card.level > levelFilter.max) {
-      rejected.push({ id, name: card.name, reason: `Level ${card.level} > max ${levelFilter.max}` });
-      continue;
-    }
-
-    const isMeaningfulStat = (val) =>
-      typeof val === 'number' && !isNaN(val) && val !== -1;
+    // Level filter
+    if (levelFilter.min != null && card.level < levelFilter.min) return false;
+    if (levelFilter.max != null && card.level > levelFilter.max) return false;
 
     // ATK filter
-    if (atkFilter.min != null && isMeaningfulStat(card.atk) && card.atk < atkFilter.min) {
-      rejected.push({ id, name: card.name, reason: `ATK ${card.atk} < min ${atkFilter.min}` });
-      continue;
-    }
-
-    if (atkFilter.max != null && isMeaningfulStat(card.atk) && card.atk > atkFilter.max) {
-      rejected.push({ id, name: card.name, reason: `ATK ${card.atk} > max ${atkFilter.max}` });
-      continue;
-    }
+    if (atkFilter.min != null && card.atk < atkFilter.min) return false;
+    if (atkFilter.max != null && card.atk > atkFilter.max) return false;
 
     // DEF filter
-    if (defFilter.min != null && isMeaningfulStat(card.def) && card.def < defFilter.min) {
-      rejected.push({ id, name: card.name, reason: `DEF ${card.def} < min ${defFilter.min}` });
-      continue;
-    }
+    if (defFilter.min != null && card.def < defFilter.min) return false;
+    if (defFilter.max != null && card.def > defFilter.max) return false;
 
-    if (defFilter.max != null && isMeaningfulStat(card.def) && card.def > defFilter.max) {
-      rejected.push({ id, name: card.name, reason: `DEF ${card.def} > max ${defFilter.max}` });
-      continue;
-    }
+    return true; // Only include cards passing all checks
+  });
 
-    accepted.push(id);
-  }
-
-  // console.log("❌ Rejected cards:", rejected);
-  // console.log("✅ Accepted card count:", accepted.length);
-
-  const filteredIds = accepted;
   const visibleIds = filteredIds.slice(start, end);
   const maxPages = Math.ceil(filteredIds.length / cardsPerPage);
+
+
 
   // Fetch card data from local JSON
   useEffect(() => {
@@ -150,6 +108,7 @@ export default function TrunkArea({
     e.preventDefault();
     const droppedId = e.dataTransfer.getData("text/plain");
     if (droppedId) {
+      // Drop logic is handled by decks; trunk only receives
       console.log(`Dropped ${droppedId} onto TrunkArea (no-op here)`);
     }
   };
