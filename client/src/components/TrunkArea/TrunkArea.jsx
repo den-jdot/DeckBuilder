@@ -18,7 +18,14 @@ export default function TrunkArea({
   const [currentPage, setCurrentPage] = useState(0);
 
   // Filter state for trunk listing
-  const [nameFilter, setNameFilter] = useState("");  
+  const [nameFilter, setNameFilter] = useState("");
+  const [typeLineFilter, setTypeLineFilter] = useState(""); //Warrior, Tuner, Synchro Flip, etc.
+  const [attributeFilter, setAttributeFilter] = useState(""); //DARK, LIGHT, etc.
+  const [levelFilter, setLevelFilter] = useState({ min: 0, max: 13 }); //Includes Ranks, Links
+  const [atkFilter, setAtkFilter] = useState({ min: 0, max: 10000 });
+  const [defFilter, setDefFilter] = useState({ min: 0, max: 10000 });
+  const [descFilter, setDescFilter] = useState(""); //Effect Text
+  const [cardTypeFilter, setCardTypeFilter] = useState(""); //Color, ST Icon
 
   // Pagination setup
   const cardsPerPage = 30;
@@ -37,16 +44,29 @@ export default function TrunkArea({
     // // Type filter (example: "Monster", "Spell", etc.)
     // if (typeFilter && !card.type.toLowerCase().includes(typeFilter.toLowerCase())) return false;
 
+    // Desc filter (example: Effect Description)
+    if (descFilter) {
+      const terms = descFilter.toLowerCase().split(/\s+/); // split on whitespace
+      const cardDesc = card.desc?.toLowerCase() ?? "";
+
+      const allTermsMatch = terms.every(term => cardDesc.includes(term));
+      if (!allTermsMatch) return false;
+    }
+
     // // Attribute filter (like "DARK", "LIGHT", etc.)
     // if (attributeFilter && card.attribute !== attributeFilter) return false;
 
-    // // Level filter
-    // if (minLevel && card.level < minLevel) return false;
-    // if (maxLevel && card.level > maxLevel) return false;
+    // Level filter
+    if (levelFilter.min != null && card.level < levelFilter.min) return false;
+    if (levelFilter.max != null && card.level > levelFilter.max) return false;
 
-    // // ATK/DEF filter
-    // if (minATK && card.atk < minATK) return false;
-    // if (maxATK && card.atk > maxATK) return false;
+    // ATK filter
+    if (atkFilter.min != null && card.atk < atkFilter.min) return false;
+    if (atkFilter.max != null && card.atk > atkFilter.max) return false;
+
+    // DEF filter
+    if (defFilter.min != null && card.def < defFilter.min) return false;
+    if (defFilter.max != null && card.def > defFilter.max) return false;
 
     return true; // Only include cards passing all checks
   });
@@ -103,7 +123,16 @@ export default function TrunkArea({
       onDragOver={(e) => e.preventDefault()}
       onDrop={handleDrop}
     >
-      <TrunkFilter nameFilter={nameFilter} setNameFilter={setNameFilter} />
+      <TrunkFilter
+        nameFilter={nameFilter} setNameFilter={setNameFilter}
+        typeLineFilter={typeLineFilter} setTypeLineFilter={setTypeLineFilter}
+        attributeFilter={attributeFilter} setAttributeFilter={setAttributeFilter}
+        levelFilter={levelFilter} setLevelFilter={setLevelFilter}
+        atkFilter={atkFilter} setAtkFilter={setAtkFilter}
+        defFilter={defFilter} setDefFilter={setDefFilter}
+        descFilter={descFilter} setDescFilter={setDescFilter}
+        cardTypeFilter={cardTypeFilter} setCardTypeFilter={setCardTypeFilter}
+      />
       <TrunkListing
         cardMap={cards}
         visibleIds={visibleIds}

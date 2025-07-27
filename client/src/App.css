@@ -208,6 +208,50 @@ main {
   box-sizing: border-box;
 }
 
+.double-trunk-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  padding: 6px;
+}
+
+.double-trunk-filter-grid input,
+.double-trunk-filter-grid select {
+  width: 100%;
+  padding: 4px;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.triple-trunk-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.triple-trunk-filter-grid input,
+.triple-trunk-filter-grid select {
+  width: 100%;
+  padding: 2px;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.atk-filter,
+.def-filter,
+.level-filter {
+  padding: 4px;
+}
+
+.section-label {
+  grid-column: span 2;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 4px;
+  color: #ccc;
+}
+
 .card-entry {
   display: flex;
   flex-direction: column;
