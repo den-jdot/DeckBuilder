@@ -80,14 +80,27 @@ function App() {
   useEffect(() => {
     if (!currentDeck || !currentFormat) return;
 
+    const normalize = (list) => list.map(String); // Normalize IDs
+
     setFormat((prevFormats) =>
       prevFormats.map((f) =>
         f.name === currentFormat
-          ? { ...f, decks: { ...f.decks, [currentDeck]: { ...currentDeckData } } }
+          ? {
+              ...f,
+              decks: {
+                ...f.decks,
+                [currentDeck]: {
+                  main: normalize(currentDeckData.main),
+                  extra: normalize(currentDeckData.extra),
+                  side: normalize(currentDeckData.side),
+                },
+              },
+            }
           : f
       )
     );
-  }, [currentDeckData]);
+  }, [currentDeckData, currentDeck, currentFormat]);
+
 
   // Load deck from saved format
   useEffect(() => {
@@ -107,23 +120,6 @@ function App() {
   );
   }, [currentDeck, currentFormat]);
 
-  // Function to add a card to the current deck
-  // const addCardToDeck = (zone, id) => {
-  //   if (!cards[id]) return;
-
-  //   const maxPerCard = 3;
-  //   const maxSizes = { main: 60, extra: 15, side: 15 };
-  //   const currentZone = currentDeckData[zone];
-
-  //   if (currentZone.length >= maxSizes[zone]) return;
-  //   if (countCopies(zone, id) >= maxPerCard) return;
-
-  //   setCurrentDeckData((prev) => ({
-  //     ...prev,
-  //     [zone]: [...prev[zone], id],
-  //   }));
-  // };
-
   const EXTRA_DECK_TYPES = [
     'Fusion',
     'Synchro',
@@ -139,11 +135,14 @@ function App() {
       card?.type?.toLowerCase().includes(type.toLowerCase())
     );
 
-  const countCopies = (id) => (
-    currentDeckData.main.filter((x) => x === id).length +
-    currentDeckData.extra.filter((x) => x === id).length +
-    currentDeckData.side.filter((x) => x === id).length
-  );
+  const countCopies = (id) => {
+    const strId = String(id);
+    return (
+      currentDeckData.main.filter((x) => String(x) === strId).length +
+      currentDeckData.extra.filter((x) => String(x) === strId).length +
+      currentDeckData.side.filter((x) => String(x) === strId).length
+    );
+  };
 
   const totalCountOf = (predicate) => (
     currentDeckData.main.filter((id) => predicate(cards[String(id)])).length +
@@ -151,24 +150,14 @@ function App() {
     currentDeckData.side.filter((id) => predicate(cards[String(id)])).length
   );
 
-  // const inFlightAddRef = useRef({}); // key: id, value: timestamp
 
   const addCard = (id, zone) => {
     const card = cards[String(id)];
     if (!card) return;
 
-    // const now = Date.now();
-    // const lastAddTime = inFlightAddRef.current[id] || 0;
-
-    // // Prevent repeated adds within 200ms
-    // if (now - lastAddTime < 200) {
-    //   console.log(`Prevented rapid duplicate add of ${id}`);
-    //   return;
-    // }
-
-    // inFlightAddRef.current[id] = now;
-
+    console.log("Trying to add:", id, typeof id);
     const totalCopies = countCopies(id);
+    console.log("Copies already in deck:", totalCopies);
     if (totalCopies >= 3) {
       console.log('Maximum 3 copies allowed.');
       return;
@@ -217,6 +206,7 @@ function App() {
       <div className="main-app">
         <div className="left-app">
           <UpperArea
+            setCards={setCards}
             format={format}
             setFormat={setFormat}
             currentFormat={currentFormat}
@@ -270,3 +260,20 @@ function App() {
 }
 
 export default App;
+
+  // Function to add a card to the current deck
+  // const addCardToDeck = (zone, id) => {
+  //   if (!cards[id]) return;
+
+  //   const maxPerCard = 3;
+  //   const maxSizes = { main: 60, extra: 15, side: 15 };
+  //   const currentZone = currentDeckData[zone];
+
+  //   if (currentZone.length >= maxSizes[zone]) return;
+  //   if (countCopies(zone, id) >= maxPerCard) return;
+
+  //   setCurrentDeckData((prev) => ({
+  //     ...prev,
+  //     [zone]: [...prev[zone], id],
+  //   }));
+  // };

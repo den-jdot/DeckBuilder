@@ -13,6 +13,9 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+// Helper to normalize IDs to string form
+const normalize = (list) => list.map(String);
+
 export default function HeaderArea({
   currentDeck,
   setCurrentDeck,
@@ -25,6 +28,9 @@ export default function HeaderArea({
   setCurrentDeckData,
 }) {
   const deckName = (deckNameInput ?? '').trim();
+
+  const [copyDialogOpen, setCopyDialogOpen] = React.useState(false);
+  const [selectedTargetFormat, setSelectedTargetFormat] = React.useState('');
 
   const [snackbar, setSnackbar] = React.useState({
     open: false,
@@ -42,6 +48,7 @@ export default function HeaderArea({
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
+  // Save current deck to the current format
   const handleSave = () => {
     if (!deckName) {
       openSnackbar("Please enter a deck name.", "warning");
@@ -59,20 +66,64 @@ export default function HeaderArea({
     if (!formatObj.decks) formatObj.decks = {};
 
     formatObj.decks[deckName] = {
-      main: [...currentDeckData.main],
-      extra: [...currentDeckData.extra],
-      side: [...currentDeckData.side],
+      main: normalize(currentDeckData.main),
+      extra: normalize(currentDeckData.extra),
+      side: normalize(currentDeckData.side),
     };
 
-    const sortedDecks = Object.entries(formatObj.decks).sort(([a], [b]) => a.localeCompare(b));
-    formatObj.decks = Object.fromEntries(sortedDecks);
+    // Sort decks alphabetically
+    formatObj.decks = Object.fromEntries(
+      Object.entries(formatObj.decks).sort(([a], [b]) => a.localeCompare(b))
+    );
 
     setFormat(updatedFormats);
     setCurrentDeck(deckName);
     openSnackbar(`Deck '${deckName}' saved successfully.`, 'success');
-    console.log(`Deck '${deckName}' saved with cards:`, formatObj.decks[deckName]);
   };
 
+  // Copy current deck to a different format
+  const handleConfirmCopy = () => {
+    const name = (deckNameInput ?? '').trim();
+    if (!name) {
+      openSnackbar("Please enter a deck name.", "warning");
+      return;
+    }
+
+    if (!selectedTargetFormat) {
+      openSnackbar("Please select a format to copy to.", "warning");
+      return;
+    }
+
+    const copiedDeck = {
+      main: normalize(currentDeckData.main),
+      extra: normalize(currentDeckData.extra),
+      side: normalize(currentDeckData.side),
+    };
+
+    const updatedFormats = format.map((f) => {
+      if (f.name !== selectedTargetFormat) return f;
+
+      const existingDecks = f.decks || {};
+      const updatedDecks = {
+        ...existingDecks,
+        [name]: copiedDeck,
+      };
+
+      return {
+        ...f,
+        decks: Object.fromEntries(
+          Object.entries(updatedDecks).sort(([a], [b]) => a.localeCompare(b))
+        ),
+      };
+    });
+
+    setFormat(updatedFormats);
+    setCurrentDeck(name);
+    setCopyDialogOpen(false);
+    openSnackbar(`Deck copied to ${selectedTargetFormat} as '${name}'`, 'success');
+  };
+
+  // Delete the current deck from the current format
   const handleDelete = () => {
     const updatedFormats = [...format];
     const formatIndex = updatedFormats.findIndex((f) => f.name === currentFormat);
@@ -96,23 +147,17 @@ export default function HeaderArea({
     setCurrentDeck(nextDeck);
     setDeckNameInput(nextDeck);
     setCurrentDeckData({ main: [], extra: [], side: [] });
-    openSnackbar(`Deck '${deckName}' deleted.`, "info");
-    console.log(`Deck '${deckName}' deleted.`);
     setConfirmOpen(false);
+    openSnackbar(`Deck '${deckName}' deleted.`, "info");
   };
 
   return (
     <div className="header-area">
       {/* Deck name input */}
-      <Box
-        component="form"
-        sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' } }}
-        noValidate
-        autoComplete="off"
-      >
+      <Box component="form" noValidate autoComplete="off" sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' } }}>
         <TextField
           label="Deck Name"
-          value={deckNameInput}
+          value={deckNameInput ?? ''}
           onChange={(e) => setDeckNameInput(e.target.value)}
           variant="outlined"
           InputLabelProps={{ style: { color: 'white' } }}
@@ -126,7 +171,7 @@ export default function HeaderArea({
         />
       </Box>
 
-      {/* Buttons */}
+      {/* Action buttons */}
       <Box
         sx={{
           display: 'flex',
@@ -137,12 +182,21 @@ export default function HeaderArea({
       >
         <ButtonGroup variant="contained" aria-label="Deck actions">
           <Button onClick={handleSave}>Save</Button>
-          <Button disabled>Copy to...</Button>
+          <Button
+            onClick={() => {
+              setSelectedTargetFormat(
+                format.find((f) => f.name !== currentFormat)?.name ?? ''
+              );
+              setCopyDialogOpen(true);
+            }}
+          >
+            Copy to...
+          </Button>
           <Button onClick={() => setConfirmOpen(true)}>Delete</Button>
         </ButtonGroup>
       </Box>
 
-      {/* Snackbar */}
+      {/* Snackbar feedback */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
@@ -167,6 +221,29 @@ export default function HeaderArea({
           </Button>
           <Button onClick={handleDelete} color="error" autoFocus>
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Copy to another format dialog */}
+      <Dialog open={copyDialogOpen} onClose={() => setCopyDialogOpen(false)}>
+        <DialogTitle>Copy deck to another format</DialogTitle>
+        <DialogActions sx={{ flexDirection: 'column', alignItems: 'stretch', gap: 1, p: 2 }}>
+          <select
+            value={selectedTargetFormat}
+            onChange={(e) => setSelectedTargetFormat(e.target.value)}
+            style={{ padding: '8px', fontSize: '1rem' }}
+          >
+            {format
+              .filter((f) => f.name !== currentFormat)
+              .map((f) => (
+                <option key={f.name} value={f.name}>
+                  {f.name}
+                </option>
+              ))}
+          </select>
+          <Button variant="contained" onClick={handleConfirmCopy}>
+            Confirm Copy
           </Button>
         </DialogActions>
       </Dialog>

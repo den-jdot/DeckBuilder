@@ -1,6 +1,5 @@
 import FormatArea from '../UpperComponents/FormatArea';
 import HeaderArea from '../UpperComponents/HeaderArea';
-import MiscArea from '../UpperComponents/MiscArea';
 
 export default function UpperArea({
   format,
@@ -38,8 +37,6 @@ export default function UpperArea({
         currentDeckData={currentDeckData}
         setCurrentDeckData={setCurrentDeckData}
       />
-
-      {/* <MiscArea /> */}
     </div>
   );
 }

@@ -11,10 +11,49 @@ export default function SideDeck({
 }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
-  // === Filter Side Deck cards (not Extra Deck types) ===
+  const typeOrder = { Monster: 0, Spell: 1, Trap: 2 };
+
+  const defaultSortDeck = (cardA, cardB) => {
+    const typeA = cardA.type?.includes("Monster")
+      ? "Monster"
+      : cardA.type?.includes("Spell")
+      ? "Spell"
+      : cardA.type?.includes("Trap")
+      ? "Trap"
+      : "Other";
+
+    const typeB = cardB.type?.includes("Monster")
+      ? "Monster"
+      : cardB.type?.includes("Spell")
+      ? "Spell"
+      : cardB.type?.includes("Trap")
+      ? "Trap"
+      : "Other";
+
+    const orderA = typeOrder[typeA] ?? 99;
+    const orderB = typeOrder[typeB] ?? 99;
+    if (orderA !== orderB) return orderA - orderB;
+
+    const lvlA = cardA.level ?? -1;
+    const lvlB = cardB.level ?? -1;
+    if (lvlA !== lvlB) return lvlB - lvlA;
+
+    const atkA = cardA.atk ?? -1;
+    const atkB = cardB.atk ?? -1;
+    if (atkA !== atkB) return atkA - atkB;
+
+    const defA = cardA.def ?? -1;
+    const defB = cardB.def ?? -1;
+    if (defA !== defB) return defA - defB;
+
+    return (cardA.name ?? "").localeCompare(cardB.name ?? "");
+  };
+
+  // Sort side deck cards using the above logic
   const sideDeckCards = currentDeckData.side
     .map((id) => cards[String(id)])
-    .filter((card) => card); // optionally filter more strictly if needed
+    .filter((card) => card)
+    .sort(defaultSortDeck);
 
   const removeCard = (idToRemove) => {
     setCurrentDeckData((prev) => {
@@ -75,10 +114,10 @@ export default function SideDeck({
             onDragStart={(e) =>
               e.dataTransfer.setData('text/plain', String(card.id))
             }
-            onDoubleClick={() => removeCard(card.id)}
+            onDoubleClick={() => addCard(String(card.id))}
             onContextMenu={(e) => {
               e.preventDefault();
-              addCard(String(card.id));
+              removeCard(card.id);
             }}
             onClick={() => {
               setCurrentCard(card);
