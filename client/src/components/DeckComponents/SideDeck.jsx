@@ -49,9 +49,8 @@ export default function SideDeck({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       style={{
-        border: isDraggingOver ? '2px dashed #c62828' : '2px dashed transparent',
-        transition: 'border 0.2s ease',
-        boxSizing: 'border-box',
+        backgroundColor: isDraggingOver ? '#eef' : 'transparent',
+        transition: 'background-color 0.2s',
       }}
     >
       <div className="deck-header">

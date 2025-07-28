@@ -9,8 +9,29 @@ export default function TrunkListing({
   setCurrentDeckData,
   nameFilter,
   setNameFilter,
+  sortConfig,
+  setSortConfig,
 }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+
+  const sortedIds = [...visibleIds].sort((a, b) => {
+    const cardA = cardMap[a];
+    const cardB = cardMap[b];
+
+    for (const rule of sortConfig) {
+      const { field, direction } = rule;
+
+      const valA = cardA[field];
+      const valB = cardB[field];
+
+      if (valA == null || valB == null) continue;
+
+      if (valA < valB) return direction === "asc" ? -1 : 1;
+      if (valA > valB) return direction === "asc" ? 1 : -1;
+    }
+
+    return 0;
+  });
 
   const EXTRA_DECK_TYPES = [
     'Fusion',

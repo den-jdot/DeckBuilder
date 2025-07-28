@@ -52,6 +52,11 @@ function App() {
     side: [],
   });
 
+  // Sorting state
+  const [sortConfig, setSortConfig] = useState(
+    [{ field: '', direction: 'asc' }]  // Default sort by name ascending
+  );
+
   // Sync deckNameInput when deck changes
   useEffect(() => {
     setDeckNameInput(currentDeck);
@@ -254,6 +259,8 @@ function App() {
           currentDeckData={currentDeckData}
           setCurrentDeckData={setCurrentDeckData}
           currentFormat={currentFormat}
+          sortConfig={sortConfig}
+          setSortConfig={setSortConfig}
         />
 
       </div>

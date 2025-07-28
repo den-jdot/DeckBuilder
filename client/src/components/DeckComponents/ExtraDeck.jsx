@@ -21,16 +21,6 @@ export default function ExtraDeck({
 }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
-  const extraDeckCards = currentDeckData.extra
-    .map((id) => cards[String(id)])
-    .filter(
-      (card) =>
-        card &&
-        EXTRA_DECK_TYPES.some((type) =>
-          card.type?.toLowerCase().includes(type.toLowerCase())
-        )
-    );
-
   const removeCard = (idToRemove) => {
     setCurrentDeckData((prev) => {
       const updatedExtra = [...prev.extra];
@@ -48,6 +38,59 @@ export default function ExtraDeck({
     if (droppedId) addCard(droppedId);
   };
 
+  const sortedExtraDeckCards = currentDeckData.extra
+    .map((id) => cards[String(id)])
+    .filter(
+      (card) =>
+        card &&
+        EXTRA_DECK_TYPES.some((type) =>
+          card.type?.toLowerCase().includes(type.toLowerCase())
+        )
+    )
+    .sort((cardA, cardB) => {
+      const getTypeOrder = (type) => {
+        if (!type) return 99;
+        type = type.toLowerCase();
+        if (type.includes("monster")) return 0;
+        if (type.includes("spell")) return 1;
+        if (type.includes("trap")) return 2;
+        return 3;
+      };
+
+      const typeA = getTypeOrder(cardA.type);
+      const typeB = getTypeOrder(cardB.type);
+      if (typeA !== typeB) return typeA - typeB;
+
+      // Frame type (e.g., Fusion, Synchro)
+      const frameOrder = {
+        fusion: 0,
+        synchro: 1,
+        xyz: 2,
+        link: 3,
+      };
+      const frameA = frameOrder[cardA.frameType?.toLowerCase()] ?? 99;
+      const frameB = frameOrder[cardB.frameType?.toLowerCase()] ?? 99;
+      if (frameA !== frameB) return frameA - frameB;
+
+      // Level (descending, -1 is lowest)
+      const lvlA = cardA.level ?? -1;
+      const lvlB = cardB.level ?? -1;
+      if (lvlA !== lvlB) return lvlB - lvlA;
+
+      // ATK (descending, -1 is lowest)
+      const atkA = cardA.atk ?? -1;
+      const atkB = cardB.atk ?? -1;
+      if (atkA !== atkB) return atkB - atkA;
+
+      // DEF (descending, -1 is lowest)
+      const defA = cardA.def ?? -1;
+      const defB = cardB.def ?? -1;
+      if (defA !== defB) return defB - defA;
+
+      // Name alphabetical
+      return (cardA.name ?? "").localeCompare(cardB.name ?? "");
+    });
+
   return (
     <div
       className="extra-deck"
@@ -58,9 +101,8 @@ export default function ExtraDeck({
       }}
       onDragLeave={() => setIsDraggingOver(false)}
       style={{
-        border: isDraggingOver ? '2px dashed #8e44ad' : '2px dashed transparent',
-        transition: 'border 0.2s ease',
-        boxSizing: 'border-box',
+        backgroundColor: isDraggingOver ? '#eef' : 'transparent',
+        transition: 'background-color 0.2s',
       }}
     >
       <div className="deck-header">
@@ -68,7 +110,7 @@ export default function ExtraDeck({
           <div className="name-box">EXTRA</div>
           <Stack direction="row" spacing={1}>
             <Button sx={{ backgroundColor: '#676e73ff', color: 'white' }}>
-              {extraDeckCards.length}
+              {sortedExtraDeckCards.length}
             </Button>
           </Stack>
         </div>
@@ -77,28 +119,28 @@ export default function ExtraDeck({
           <Stack direction="row" spacing={1}>
             <Button sx={{ backgroundColor: '#9c27b0', color: 'white' }}>
               {
-                extraDeckCards.filter((card) =>
+                sortedExtraDeckCards.filter((card) =>
                   card.humanReadableCardType?.toLowerCase().includes('fusion')
                 ).length
               }
             </Button>
             <Button sx={{ backgroundColor: '#d0d0d0ff', color: 'black' }}>
               {
-                extraDeckCards.filter((card) =>
+                sortedExtraDeckCards.filter((card) =>
                   card.humanReadableCardType?.toLowerCase().includes('synchro')
                 ).length
               }
             </Button>
             <Button sx={{ backgroundColor: '#191919ff', color: 'white' }}>
               {
-                extraDeckCards.filter((card) =>
+                sortedExtraDeckCards.filter((card) =>
                   card.humanReadableCardType?.toLowerCase().includes('xyz')
                 ).length
               }
             </Button>
             <Button sx={{ backgroundColor: '#2196f3', color: 'white' }}>
               {
-                extraDeckCards.filter((card) =>
+                sortedExtraDeckCards.filter((card) =>
                   card.humanReadableCardType?.toLowerCase().includes('link')
                 ).length
               }
@@ -108,7 +150,7 @@ export default function ExtraDeck({
       </div>
 
       <div className="sub-deck-card-grid">
-        {extraDeckCards.map((card, index) => (
+        {sortedExtraDeckCards.map((card, index) => (
           <img
             key={`${card.id}-${index}`}
             src={card.card_images?.[0]?.image_url_small}

@@ -39,6 +39,70 @@ export default function MainDeck({
     if (droppedId) addCard(droppedId, 'main');
   };
 
+  const defaultSortDeck = (cardA, cardB) => {
+    const typeOrder = { Monster: 0, Spell: 1, Trap: 2 };
+
+    const typeA = cardA.type?.includes("Monster") ? "Monster" :
+                  cardA.type?.includes("Spell")   ? "Spell" :
+                  cardA.type?.includes("Trap")    ? "Trap" : "Other";
+
+    const typeB = cardB.type?.includes("Monster") ? "Monster" :
+                  cardB.type?.includes("Spell")   ? "Spell" :
+                  cardB.type?.includes("Trap")    ? "Trap" : "Other";
+
+    const orderA = typeOrder[typeA] ?? 100;
+    const orderB = typeOrder[typeB] ?? 100;
+    if (orderA !== orderB) return orderA - orderB;
+
+    const lvlA = cardA.level ?? -1;
+    const lvlB = cardB.level ?? -1;
+    if (lvlA !== lvlB) return lvlB - lvlA;
+
+    const atkA = cardA.atk ?? -1;
+    const atkB = cardB.atk ?? -1;
+    if (atkA !== atkB) return atkB - atkA;
+
+    const defA = cardA.def ?? -1;
+    const defB = cardB.def ?? -1;
+    if (defA !== defB) return defB - defA;
+
+    return (cardA.name ?? "").localeCompare(cardB.name ?? "");
+  };
+
+  const shuffleDeck = (arr) => {
+    const result = [...arr];
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  };
+
+  const applySort = () => {
+    const sorted = [...currentDeckData.main]
+      .map((id) => cards[String(id)])
+      .filter((card) => !!card)
+      .sort(defaultSortDeck)
+      .map((card) => String(card.id));
+
+    setCurrentDeckData((prev) => ({
+      ...prev,
+      main: sorted,
+    }));
+  };
+
+  const applyShuffle = () => {
+    const shuffled = [...currentDeckData.main];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    setCurrentDeckData((prev) => ({
+      ...prev,
+      main: shuffled,
+    }));
+  };
+
   return (
     <div
       className="main-deck"
@@ -49,9 +113,8 @@ export default function MainDeck({
       }}
       onDragLeave={() => setIsDraggingOver(false)}
       style={{
-        border: isDraggingOver ? '2px dashed #5f9ea0' : '2px dashed transparent',
-        transition: 'border 0.2s ease',
-        boxSizing: 'border-box',
+        backgroundColor: isDraggingOver ? '#eef' : 'transparent',
+        transition: 'background-color 0.2s',
       }}
     >
       <div className="deck-header">
@@ -61,6 +124,10 @@ export default function MainDeck({
             <Button sx={{ backgroundColor: '#676e73ff', color: 'white' }}>
               {mainDeckCards.length}
             </Button>
+            <div className="deck-sort-controls card-type-buttons">
+              <button onClick={applySort}>Sort</button>
+              <button onClick={applyShuffle}>Shuffle</button>
+            </div>
           </Stack>
         </div>
 
@@ -134,7 +201,7 @@ export default function MainDeck({
             style={{
               width: '100%',
               height: '100%',
-              maxWidth: '120px',
+              maxWidth: '100px',
               objectFit: 'contain',
               cursor: 'pointer',
             }}
