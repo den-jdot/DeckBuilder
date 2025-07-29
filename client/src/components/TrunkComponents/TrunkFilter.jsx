@@ -11,7 +11,8 @@ export default function TrunkFilter({
   subTypeFilter, setSubTypeFilter,
   spellFilter, setSpellFilter,
   trapFilter, setTrapFilter,
-  sortConfig, setSortConfig
+  sortConfig, setSortConfig,
+  scaleFilter, setScaleFilter
 }) {
   return (
     <div className="trunk-filter">
@@ -123,8 +124,10 @@ export default function TrunkFilter({
           <option value="EARTH">EARTH</option>
           <option value="WIND">WIND</option>
           <option value="DIVINE">DIVINE</option>
-        </select>  
-        
+        </select>
+      </div>    
+
+      <div className="quadra-trunk-filter-grid">  
         <div className="level-filter">
           <div className="section-label">LVL
           </div>
@@ -189,6 +192,27 @@ export default function TrunkFilter({
               const value = parseInt(e.target.value);
               setDefFilter({ ...defFilter, max: isNaN(value) ? 10000 : value });
             }}
+          />
+        </div>
+
+        <div className="scale-filter">
+          <div className="section-label">Scale
+          </div>
+          <input
+            type="number"
+            placeholder="scale min"
+            value={scaleFilter.min}
+            onChange={(e) =>
+              setScaleFilter({ ...scaleFilter, min: parseInt(e.target.value) || "" })
+            }
+          />
+          <input
+            type="number"
+            placeholder="scale max"
+            value={scaleFilter.max}
+            onChange={(e) =>
+              setScaleFilter({ ...scaleFilter, max: parseInt(e.target.value) || 13 })
+            }
           />
         </div>
       </div>

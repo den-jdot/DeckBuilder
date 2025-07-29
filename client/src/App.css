@@ -170,6 +170,7 @@ main {
 
 .trunk-area {
   flex: 0 0 22%;
+  min-width: 260px;
 } 
 
 .trunk-filter {
@@ -246,9 +247,25 @@ main {
   box-sizing: border-box;
 }
 
+.quadra-trunk-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.quadra-trunk-filter-grid input,
+.quadra-trunk-filter-grid select {
+  width: 100%;
+  padding: 4px;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
 .atk-filter,
 .def-filter,
-.level-filter {
+.level-filter,
+.scale-filter {
   padding: 4px;
 }
 
