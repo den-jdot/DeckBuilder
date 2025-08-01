@@ -12,7 +12,8 @@ export default function TrunkFilter({
   spellFilter, setSpellFilter,
   trapFilter, setTrapFilter,
   sortConfig, setSortConfig,
-  scaleFilter, setScaleFilter
+  scaleFilter, setScaleFilter,
+  banFilter, setBanFilter
 }) {
   return (
     <div className="trunk-filter">
@@ -298,6 +299,27 @@ export default function TrunkFilter({
         </div>
       
         <div>
+          <div>
+            <div className="section-label">Banlist</div>
+            <div className="single-trunk-filter-grid card-type-buttons">
+              {["0", "1", "2"].map((tag) => (
+                <button
+                  key={tag}
+                  className={banFilter.includes(tag) ? "active" : ""}
+                  onClick={() =>
+                    setBanFilter((prev) =>
+                      prev.includes(tag)
+                        ? prev.filter((t) => t !== tag) // remove if already active
+                        : [...prev, tag]               // add if not active
+                    )
+                  }
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="section-label">Sort
           </div>
           <div className="single-trunk-filter-grid sort-controls">

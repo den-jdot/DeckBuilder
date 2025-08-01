@@ -67,6 +67,14 @@ export default function MainDeck({
     const defB = cardB.def ?? -1;
     if (defA !== defB) return defB - defA;
 
+    const raceA = cardA.race ?? "";
+    const raceB = cardB.race ?? "";
+    // Put "Normal" first
+    if (raceA === "Normal" && raceB !== "Normal") return -1;
+    if (raceB === "Normal" && raceA !== "Normal") return 1;
+
+    if (raceA !== raceB) return raceA.localeCompare(raceB);
+
     return (cardA.name ?? "").localeCompare(cardB.name ?? "");
   };
 
@@ -186,7 +194,7 @@ export default function MainDeck({
                 e.preventDefault();
                 removeCard(card.id);
               }}
-              onClick={() => setCurrentCard(card)}
+              onClick={() => {setCurrentCard(card); console.log('Clicked card object:', card);}}
               title="Double-click to remove / Right-click to add duplicate"
             >
               <div className="card-wrapper">

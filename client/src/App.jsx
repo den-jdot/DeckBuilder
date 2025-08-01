@@ -93,6 +93,31 @@ function App() {
     loadBanlist();
   }, [currentFormat]);
 
+  // 🔹 Sync banStatus into cards whenever banlist changes
+  useEffect(() => {
+    setCards((prev) => {
+      let changed = false;
+      const updated = { ...prev };
+
+      for (const id in updated) {
+        const card = updated[id];
+        if (!card) continue;
+
+        let newStatus = "";
+        if (banlist.banned.includes(card.name)) newStatus = "0";
+        else if (banlist.limited.includes(card.name)) newStatus = "1";
+        else if (banlist.semi.includes(card.name)) newStatus = "2";
+
+        if (card.banStatus !== newStatus) {
+          updated[id] = { ...card, banStatus: newStatus }; // clone only if changed
+          changed = true;
+        }
+      }
+
+      return changed ? updated : prev; // avoid re-render loop if nothing changed
+    });
+  }, [banlist]);
+
   // --- Sorting ---
   const [sortConfig, setSortConfig] = useState([{ field: 'name', direction: 'asc' }]);
 

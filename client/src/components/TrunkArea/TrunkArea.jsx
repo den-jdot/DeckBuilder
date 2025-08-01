@@ -12,7 +12,7 @@ export default function TrunkArea({
   sortConfig,
   setSortConfig,
   banStatus,
-  banlist // 👈 now received from App
+  banlist
 }) {
   // Local pagination and filtering state
   const [cardIds, setCardIds] = useState([]);
@@ -31,6 +31,7 @@ export default function TrunkArea({
   const [spellFilter, setSpellFilter] = useState("");
   const [trapFilter, setTrapFilter] = useState("");
   const [scaleFilter, setScaleFilter] = useState({ min: 0, max: 13 });
+  const [banFilter, setBanFilter] = useState([]); // "", "0", "1", "2"
 
   const cardsPerPage = 25;
   const start = currentPage * cardsPerPage;
@@ -63,24 +64,29 @@ export default function TrunkArea({
     }
 
     // --- Human-readable type filter ---
-    if (humanReadableCardTypeFilter.length > 0 &&
-        !humanReadableCardTypeFilter.some(term =>
-          card.humanReadableCardType?.toLowerCase().includes(term.toLowerCase())
-        )) continue;
+    if (
+      humanReadableCardTypeFilter.length > 0 &&
+      !humanReadableCardTypeFilter.some(term =>
+        card.humanReadableCardType?.toLowerCase().includes(term.toLowerCase())
+      )
+    ) continue;
 
     // --- Frame type filter ---
-    if (frameTypeFilter.length > 0 &&
-        !frameTypeFilter.some(term =>
-          card.frameType?.toLowerCase().includes(term.toLowerCase())
-        )) continue;
+    if (
+      frameTypeFilter.length > 0 &&
+      !frameTypeFilter.some(term =>
+        card.frameType?.toLowerCase().includes(term.toLowerCase())
+      )
+    ) continue;
 
     // --- Race & sub-type filter ---
     if (raceFilter && card.race !== raceFilter) continue;
     if (subTypeFilter && !card.type.toLowerCase().includes(subTypeFilter.toLowerCase())) continue;
 
     // --- Attribute filter ---
-    if (attributeFilter &&
-        (!card.attribute || !card.attribute.toLowerCase().includes(attributeFilter.toLowerCase()))
+    if (
+      attributeFilter &&
+      (!card.attribute || !card.attribute.toLowerCase().includes(attributeFilter.toLowerCase()))
     ) continue;
 
     // --- Level/ATK/DEF filters ---
@@ -112,6 +118,9 @@ export default function TrunkArea({
     // --- Spell/Trap subtype filters ---
     if (spellFilter && !card.race.toLowerCase().includes(spellFilter.toLowerCase())) continue;
     if (trapFilter && !card.race.toLowerCase().includes(trapFilter.toLowerCase())) continue;
+
+    // --- Banlist filter ---
+    if (banFilter.length > 0 && !banFilter.includes(card.banStatus)) continue;
 
     accepted.push(id);
   }
@@ -153,7 +162,8 @@ export default function TrunkArea({
     nameFilter, descFilter, humanReadableCardTypeFilter, frameTypeFilter,
     attributeFilter, levelFilter.min, levelFilter.max,
     atkFilter.min, atkFilter.max, defFilter.min, defFilter.max,
-    raceFilter, subTypeFilter, spellFilter, trapFilter, scaleFilter.min, scaleFilter.max
+    raceFilter, subTypeFilter, spellFilter, trapFilter,
+    scaleFilter.min, scaleFilter.max, banFilter // 👈 added banFilter
   ]);
 
   return (
@@ -173,6 +183,7 @@ export default function TrunkArea({
         trapFilter={trapFilter} setTrapFilter={setTrapFilter}
         sortConfig={sortConfig} setSortConfig={setSortConfig}
         scaleFilter={scaleFilter} setScaleFilter={setScaleFilter}
+        banFilter={banFilter} setBanFilter={setBanFilter} // 👈 pass filter state
       />
 
       <TrunkListing
@@ -185,7 +196,7 @@ export default function TrunkArea({
         sortConfig={sortConfig}
         setSortConfig={setSortConfig}
         banStatus={banStatus}
-        banlist={banlist} // 👈 triggers re-render on format switch
+        banlist={banlist}
       />
 
       <TrunkNav currentPage={currentPage} setCurrentPage={setCurrentPage} maxPages={maxPages} />
