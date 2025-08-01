@@ -427,3 +427,14 @@ select.active-select {
 .ban-badge.limited { background-color: rgba(250, 54, 54, 0.872);}
 .ban-badge.semi { background-color: rgba(255, 255, 0, 0.872); color: black; }
 
+
+.active-input {
+  border: 1px solid #4c8bf5;
+  background-color: rgba(76, 139, 245, 0.1); /* light blue background */
+  color: white;
+  outline: none;
+}
+
+.active-input::placeholder {
+  color: #4c8bf5; /* optional: blue placeholder */
+}

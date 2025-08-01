@@ -26,6 +26,7 @@ export default function TrunkFilter({
             placeholder="Name"
             value={nameFilter}
             onChange={(e) => setNameFilter(e.target.value)}
+            className={nameFilter ? "active-input" : ""}
           />
         </div>
 
@@ -37,6 +38,7 @@ export default function TrunkFilter({
             placeholder="Effect text"
             value={descFilter}
             onChange={(e) => setDescFilter(e.target.value)}
+            className={descFilter ? "active-input" : ""}
           />
         </div>
       </div>
