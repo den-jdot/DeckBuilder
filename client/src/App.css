@@ -412,7 +412,7 @@ select.active-select {
   border-radius: 3px;
 }
 
-.ban-badge.banned { background-color: rgb(0, 0, 0); }
-.ban-badge.limited { background-color: rgba(250, 54, 54, 0.872); box-sizing: border-box; }
+.ban-badge.banned { background-color: rgba(0, 0, 0, 0.872);  box-sizing: border-box; border: 1px solid red; color: red; }
+.ban-badge.limited { background-color: rgba(250, 54, 54, 0.872);}
 .ban-badge.semi { background-color: rgba(255, 255, 0, 0.872); color: black; }
 
