@@ -171,21 +171,23 @@ export default function ExtraDeck({
               onClick={() => setCurrentCard(card)}
               title="Double-click to remove / Right-click to add duplicate"
             >
-              <img
-                src={card.card_images?.[0]?.image_url_small}
-                alt={card.name}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  maxWidth: '80px',
-                  objectFit: 'contain',
-                }}
-              />
-              {status && (
-                <div className={`ban-badge ${status}`}>
-                  {status === "banned" ? "0" : status === "limited" ? "1" : "2"}
-                </div>
-              )}
+              <div className="card-wrapper">
+                <img
+                  src={card.card_images?.[0]?.image_url_small}
+                  alt={card.name}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    maxWidth: '80px',
+                    objectFit: 'contain',
+                  }}
+                />
+                {status && (
+                  <div className={`ban-badge ${status}`}>
+                    {status === "banned" ? "0" : status === "limited" ? "1" : "2"}
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}

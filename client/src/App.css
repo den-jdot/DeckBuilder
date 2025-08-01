@@ -190,7 +190,7 @@ main {
 }
 
 .extra-deck, .side-deck {
-  flex: 0 0 15%;
+  flex: 0 0 15%;;
   border: 1px grey solid;
   /* border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px; */
@@ -277,6 +277,11 @@ main {
   color: #ccc;
 }
 
+.card-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
 .card-entry {
   display: flex;
   flex-direction: column;
@@ -300,21 +305,37 @@ main {
   will-change: transform;
 }
 
+.deck-card-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr); /* x per row */
+  grid-auto-rows: 1fr; /* let aspect-ratio define height */
+  gap: 0.25rem;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
 .deck-card-entry {
-  box-sizing: border-box; /* make border go inward */
-  transition: transform 0.2s ease-in-out, border 0.2s ease-in-out;
-  z-index: 1;
-  border-radius: 4px;
   position: relative;
-  display: inline-block;
+  box-sizing: border-box;
+  border-radius: 4px;
+  aspect-ratio: 3/4;;
+  overflow: hidden;
+  outline: 0 solid transparent; /* prepare for hover outline */
+  transition: transform 0.15s ease-in-out, outline 0.15s ease-in-out;
 }
 
 .deck-card-entry:hover {
-  transform: scale(0.95); /* optional hover zoom */
+  transform: scale(0.95); /* shrink visually */
+  outline: 5px solid #fbfb00; /* highlight without pushing layout */
   z-index: 10;
-  border: 4px solid #fbfb00;
-  transform-origin: center;
-  will-change: transform;
+}
+
+.deck-card-entry img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .card-image {
@@ -330,22 +351,12 @@ main {
   word-break: break-word;
 } */
 
-.deck-card-grid {
-  flex: 1;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(6, 1fr);
-  overflow-y: auto;
-  box-sizing: border-box;
-}
-
 .sub-deck-card-grid {
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(15, 1fr);
-  overflow-y: auto;
+  margin: 0.25rem;
   box-sizing: border-box;
 }
 
@@ -402,8 +413,8 @@ select.active-select {
 
 .ban-badge {
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: 5%;
+  left: 5%;
   font-weight: bold;
   font-size: 0.8rem;
   color: white;
