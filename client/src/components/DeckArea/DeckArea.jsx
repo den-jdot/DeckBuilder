@@ -10,7 +10,8 @@ export default function DeckArea({
   setCurrentDeck,
   currentDeckData,
   setCurrentDeckData,
-  addCard
+  addCard,
+  banStatus,
 }) {
 
   return (
@@ -24,6 +25,7 @@ export default function DeckArea({
         currentDeckData={currentDeckData}
         setCurrentDeckData={setCurrentDeckData}
         addCard={(id) => addCard(id, 'main')}
+        banStatus={banStatus}
       />
       <ExtraDeck
         cards={cards}
@@ -31,6 +33,7 @@ export default function DeckArea({
         setCurrentDeckData={setCurrentDeckData}
         setCurrentCard={setCurrentCard}
         addCard={(id) => addCard(id, 'extra')}
+        banStatus={banStatus}
       />
       <SideDeck
         cards={cards}
@@ -38,6 +41,7 @@ export default function DeckArea({
         setCurrentDeckData={setCurrentDeckData}
         setCurrentCard={setCurrentCard}
         addCard={(id) => addCard(id, 'side')}
+        banStatus={banStatus}
       />
     </div>
   );

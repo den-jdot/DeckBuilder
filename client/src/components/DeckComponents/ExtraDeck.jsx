@@ -18,6 +18,7 @@ export default function ExtraDeck({
   setCurrentDeckData,
   setCurrentCard,
   addCard,
+  banStatus, // ✅ new prop for banlist visuals
 }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
@@ -61,7 +62,7 @@ export default function ExtraDeck({
       const typeB = getTypeOrder(cardB.type);
       if (typeA !== typeB) return typeA - typeB;
 
-      // Frame type (e.g., Fusion, Synchro)
+      // Frame type (Fusion < Synchro < XYZ < Link)
       const frameOrder = {
         fusion: 0,
         synchro: 1,
@@ -72,17 +73,17 @@ export default function ExtraDeck({
       const frameB = frameOrder[cardB.frameType?.toLowerCase()] ?? 99;
       if (frameA !== frameB) return frameA - frameB;
 
-      // Level (descending, -1 is lowest)
+      // Level (descending)
       const lvlA = cardA.level ?? -1;
       const lvlB = cardB.level ?? -1;
       if (lvlA !== lvlB) return lvlB - lvlA;
 
-      // ATK (descending, -1 is lowest)
+      // ATK (descending)
       const atkA = cardA.atk ?? -1;
       const atkB = cardB.atk ?? -1;
       if (atkA !== atkB) return atkB - atkA;
 
-      // DEF (descending, -1 is lowest)
+      // DEF (descending)
       const defA = cardA.def ?? -1;
       const defB = cardB.def ?? -1;
       if (defA !== defB) return defB - defA;
@@ -150,35 +151,44 @@ export default function ExtraDeck({
       </div>
 
       <div className="sub-deck-card-grid">
-        {sortedExtraDeckCards.map((card, index) => (
-          <img
-            key={`${card.id}-${index}`}
-            src={card.card_images?.[0]?.image_url_small}
-            alt={card.name}
-            className="deck-card-entry"
-            draggable
-            onDragStart={(e) =>
-              e.dataTransfer.setData('text/plain', String(card.id))
-            }
-            onDoubleClick={() => addCard(String(card.id))}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              removeCard(card.id);
-            }}
-            onClick={() => {
-              setCurrentCard(card);
-              console.log('Clicked card:', card);
-            }}
-            style={{
-              width: '100%',
-              height: '100%',
-              maxWidth: '80px',
-              objectFit: 'contain',
-              cursor: 'pointer',
-            }}
-            title="Double-click to remove / Right-click to add duplicate"
-          />
-        ))}
+        {sortedExtraDeckCards.map((card, index) => {
+          const status = banStatus(card.name); // ✅ banlist status
+
+          return (
+            <div
+              key={`${card.id}-${index}`}
+              className="deck-card-entry"
+              style={{ position: 'relative', cursor: 'pointer' }}
+              draggable
+              onDragStart={(e) =>
+                e.dataTransfer.setData('text/plain', String(card.id))
+              }
+              onDoubleClick={() => addCard(String(card.id))}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                removeCard(card.id);
+              }}
+              onClick={() => setCurrentCard(card)}
+              title="Double-click to remove / Right-click to add duplicate"
+            >
+              <img
+                src={card.card_images?.[0]?.image_url_small}
+                alt={card.name}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  maxWidth: '80px',
+                  objectFit: 'contain',
+                }}
+              />
+              {status && (
+                <div className={`ban-badge ${status}`}>
+                  {status === "banned" ? "0" : status === "limited" ? "1" : "2"}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

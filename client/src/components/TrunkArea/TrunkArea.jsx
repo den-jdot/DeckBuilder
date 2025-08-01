@@ -11,6 +11,8 @@ export default function TrunkArea({
   setCurrentDeckData,
   sortConfig,
   setSortConfig,
+  banStatus,
+  banlist // 👈 now received from App
 }) {
   // Local pagination and filtering state
   const [cardIds, setCardIds] = useState([]);
@@ -41,7 +43,6 @@ export default function TrunkArea({
 
   // Apply filters
   const accepted = [];
-  const rejected = [];
 
   for (const id of cardIds) {
     const card = cards[id];
@@ -181,10 +182,10 @@ export default function TrunkArea({
         addCard={addCard}
         currentDeckData={currentDeckData}
         setCurrentDeckData={setCurrentDeckData}
-        nameFilter={nameFilter}
-        setNameFilter={setNameFilter}
         sortConfig={sortConfig}
         setSortConfig={setSortConfig}
+        banStatus={banStatus}
+        banlist={banlist} // 👈 triggers re-render on format switch
       />
 
       <TrunkNav currentPage={currentPage} setCurrentPage={setCurrentPage} maxPages={maxPages} />

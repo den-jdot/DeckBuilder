@@ -8,6 +8,7 @@ export default function MainDeck({
   setCurrentDeckData,
   setCurrentCard,
   addCard,
+  banStatus
 }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
@@ -67,15 +68,6 @@ export default function MainDeck({
     if (defA !== defB) return defB - defA;
 
     return (cardA.name ?? "").localeCompare(cardB.name ?? "");
-  };
-
-  const shuffleDeck = (arr) => {
-    const result = [...arr];
-    for (let i = result.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [result[i], result[j]] = [result[j], result[i]];
-    }
-    return result;
   };
 
   const applySort = () => {
@@ -179,35 +171,42 @@ export default function MainDeck({
       </div>
 
       <div className="deck-card-grid">
-        {mainDeckCards.map((card, index) => (
-          <img
-            key={`${card.id}-${index}`}
-            src={card.card_images?.[0]?.image_url_small}
-            alt={card.name}
-            className="deck-card-entry"
-            draggable
-            onDragStart={(e) => {
-              e.dataTransfer.setData('text/plain', String(card.id));
-            }}
-            onDoubleClick={() => addCard(String(card.id))}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              removeCard(card.id);
-            }}
-            onClick={() => {
-              setCurrentCard(card);
-              console.log('Clicked card:', card);
-            }}
-            style={{
-              width: '100%',
-              height: '100%',
-              maxWidth: '100px',
-              objectFit: 'contain',
-              cursor: 'pointer',
-            }}
-            title="Double-click to remove / Right-click to add duplicate"
-          />
-        ))}
+        {mainDeckCards.map((card, index) => {
+          const status = banStatus(card.name); // ✅ define status here
+
+          return (
+            <div
+              key={`${card.id}-${index}`}
+              className="deck-card-entry"
+              style={{ position: 'relative', cursor: 'pointer' }}
+              draggable
+              onDragStart={(e) => e.dataTransfer.setData('text/plain', String(card.id))}
+              onDoubleClick={() => addCard(String(card.id))}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                removeCard(card.id);
+              }}
+              onClick={() => setCurrentCard(card)}
+              title="Double-click to remove / Right-click to add duplicate"
+            >
+              <img
+                src={card.card_images?.[0]?.image_url_small}
+                alt={card.name}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  maxWidth: '100px',
+                  objectFit: 'contain',
+                }}
+              />
+              {status && (
+                <div className={`ban-badge ${status}`}>
+                  {status === "banned" ? "0" : status === "limited" ? "1" : "2"}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -7,31 +7,9 @@ export default function TrunkListing({
   addCard,
   currentDeckData,
   setCurrentDeckData,
-  nameFilter,
-  setNameFilter,
-  sortConfig,
-  setSortConfig,
+  banStatus // used for banlist visuals
 }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
-
-  const sortedIds = [...visibleIds].sort((a, b) => {
-    const cardA = cardMap[a];
-    const cardB = cardMap[b];
-
-    for (const rule of sortConfig) {
-      const { field, direction } = rule;
-
-      const valA = cardA[field];
-      const valB = cardB[field];
-
-      if (valA == null || valB == null) continue;
-
-      if (valA < valB) return direction === "asc" ? -1 : 1;
-      if (valA > valB) return direction === "asc" ? 1 : -1;
-    }
-
-    return 0;
-  });
 
   const EXTRA_DECK_TYPES = [
     'Fusion',
@@ -49,35 +27,33 @@ export default function TrunkListing({
     );
 
   const handleAdd = (id) => {
-
     const card = cardMap[String(id)];
     if (!card) return;
-
     const zone = isExtraType(card) ? 'extra' : 'main';
     addCard(id, zone);
   };
 
-const removeCard = (idToRemove) => {
-  setCurrentDeckData((prev) => {
-    const removeFrom = (zoneArray) => {
-      const index = zoneArray.findIndex((id) => String(id) === String(idToRemove));
-      if (index !== -1) {
-        const copy = [...zoneArray];
-        copy.splice(index, 1);
-        return copy;
-      }
-      return zoneArray;
-    };
+  const removeCard = (idToRemove) => {
+    setCurrentDeckData((prev) => {
+      const removeFrom = (zoneArray) => {
+        const index = zoneArray.findIndex((id) => String(id) === String(idToRemove));
+        if (index !== -1) {
+          const copy = [...zoneArray];
+          copy.splice(index, 1);
+          return copy;
+        }
+        return zoneArray;
+      };
 
-    return {
-      main: removeFrom(prev.main),
-      extra: removeFrom(prev.extra),
-      side: removeFrom(prev.side),
-    };
-  });
+      return {
+        main: removeFrom(prev.main),
+        extra: removeFrom(prev.extra),
+        side: removeFrom(prev.side),
+      };
+    });
 
-  console.log(`Removed card ${idToRemove} from deck by dropping into trunk.`);
-};
+    console.log(`Removed card ${idToRemove} from deck by dropping into trunk.`);
+  };
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -106,6 +82,8 @@ const removeCard = (idToRemove) => {
         const card = cardMap[id];
         if (!card) return null;
 
+        const status = banStatus(card.name); // "banned" | "limited" | "semi" | ""
+
         return (
           <div
             key={card.id}
@@ -128,6 +106,12 @@ const removeCard = (idToRemove) => {
               alt={card.name}
               className="card-image"
             />
+
+            {status && (
+              <div className={`ban-badge ${status}`}>
+                {status === 'banned' ? '0' : status === 'limited' ? '1' : '2'}
+              </div>
+            )}
           </div>
         );
       })}

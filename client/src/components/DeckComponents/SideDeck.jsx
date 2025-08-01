@@ -8,6 +8,7 @@ export default function SideDeck({
   setCurrentDeckData,
   setCurrentCard,
   addCard,
+  banStatus, // ✅ for banlist badge
 }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
@@ -49,7 +50,7 @@ export default function SideDeck({
     return (cardA.name ?? "").localeCompare(cardB.name ?? "");
   };
 
-  // Sort side deck cards using the above logic
+  // Sorted side deck cards
   const sideDeckCards = currentDeckData.side
     .map((id) => cards[String(id)])
     .filter((card) => card)
@@ -104,35 +105,44 @@ export default function SideDeck({
       </div>
 
       <div className="sub-deck-card-grid">
-        {sideDeckCards.map((card, index) => (
-          <img
-            key={`${card.id}-${index}`}
-            src={card.card_images?.[0]?.image_url_small}
-            alt={card.name}
-            className="deck-card-entry"
-            draggable
-            onDragStart={(e) =>
-              e.dataTransfer.setData('text/plain', String(card.id))
-            }
-            onDoubleClick={() => addCard(String(card.id))}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              removeCard(card.id);
-            }}
-            onClick={() => {
-              setCurrentCard(card);
-              console.log('Clicked card:', card);
-            }}
-            style={{
-              width: '100%',
-              height: '100%',
-              maxWidth: '80px',
-              objectFit: 'contain',
-              cursor: 'pointer',
-            }}
-            title="Double-click to remove / Right-click to add duplicate"
-          />
-        ))}
+        {sideDeckCards.map((card, index) => {
+          const status = banStatus(card.name); // ✅ banlist status
+
+          return (
+            <div
+              key={`${card.id}-${index}`}
+              className="deck-card-entry"
+              style={{ position: 'relative', cursor: 'pointer' }}
+              draggable
+              onDragStart={(e) =>
+                e.dataTransfer.setData('text/plain', String(card.id))
+              }
+              onDoubleClick={() => addCard(String(card.id))}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                removeCard(card.id);
+              }}
+              onClick={() => setCurrentCard(card)}
+              title="Double-click to remove / Right-click to add duplicate"
+            >
+              <img
+                src={card.card_images?.[0]?.image_url_small}
+                alt={card.name}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  maxWidth: '80px',
+                  objectFit: 'contain',
+                }}
+              />
+              {status && (
+                <div className={`ban-badge ${status}`}>
+                  {status === "banned" ? "0" : status === "limited" ? "1" : "2"}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

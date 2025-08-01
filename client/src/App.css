@@ -288,6 +288,8 @@ main {
   transition: transform 0.2s ease-in-out, border 0.2s ease-in-out;
   z-index: 1;
   border-radius: 4px;
+  position: relative;
+  display: inline-block;
 }
 
 .card-entry:hover {
@@ -303,6 +305,8 @@ main {
   transition: transform 0.2s ease-in-out, border 0.2s ease-in-out;
   z-index: 1;
   border-radius: 4px;
+  position: relative;
+  display: inline-block;
 }
 
 .deck-card-entry:hover {
@@ -395,3 +399,20 @@ select.active-select {
   background-color: #4c8bf5;
   border-color: #4c8bf5;
 }
+
+.ban-badge {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-weight: bold;
+  font-size: 0.8rem;
+  color: white;
+  background-color: rgba(0,0,0,0.7);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.ban-badge.banned { background-color: rgb(0, 0, 0); }
+.ban-badge.limited { background-color: rgba(250, 54, 54, 0.872); box-sizing: border-box; }
+.ban-badge.semi { background-color: rgba(255, 255, 0, 0.872); color: black; }
+

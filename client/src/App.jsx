@@ -46,6 +46,53 @@ function App() {
 
   const [deckNameInput, setDeckNameInput] = useState(currentDeck);
 
+  // --- Banlist state ---
+  const [banlist, setBanlist] = useState({
+    banned: [],
+    limited: [],
+    semi: [],
+  });
+
+  const banStatus = (cardName) => {
+    if (!cardName) return "";
+    if (banlist.banned.includes(cardName)) return "banned";
+    if (banlist.limited.includes(cardName)) return "limited";
+    if (banlist.semi.includes(cardName)) return "semi";
+    return "";
+  };
+
+  // --- Load banlist when format changes ---
+  useEffect(() => {
+    if (!currentFormat) return;
+
+    const loadBanlist = async () => {
+      try {
+        // Reset first to avoid stale visuals
+        setBanlist({ banned: [], limited: [], semi: [] });
+
+        const response = await fetch(`/banlists/${currentFormat}.json`); // ✅ public folder
+        if (!response.ok) {
+          console.warn(`⚠️ No banlist found for ${currentFormat}`);
+          return;
+        }
+
+        const data = await response.json();
+        setBanlist({
+          banned: data.banned ?? [],
+          limited: data.limited ?? [],
+          semi: data.semi ?? [],
+        });
+
+        console.log(`✅ Loaded banlist for ${currentFormat}`, data);
+      } catch (err) {
+        console.error("Error loading banlist:", err);
+        setBanlist({ banned: [], limited: [], semi: [] });
+      }
+    };
+
+    loadBanlist();
+  }, [currentFormat]);
+
   // --- Sorting ---
   const [sortConfig, setSortConfig] = useState([{ field: 'name', direction: 'asc' }]);
 
@@ -219,6 +266,7 @@ function App() {
               currentDeckData={currentDeckData}
               setCurrentDeckData={setCurrentDeckData}
               addCard={addCard}
+              banStatus={banStatus}
             />
           </div>
         </div>
@@ -233,6 +281,8 @@ function App() {
           currentFormat={currentFormat}
           sortConfig={sortConfig}
           setSortConfig={setSortConfig}
+          banStatus={banStatus}
+          banlist={banlist} // ✅ pass for visuals & filtering
         />
       </div>
     </main>
