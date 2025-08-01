@@ -26,10 +26,12 @@ export default function HeaderArea({
   currentFormat,
   currentDeckData,
   setCurrentDeckData,
+  clearDeck,
 }) {
   const deckName = (deckNameInput ?? '').trim();
 
   const [copyDialogOpen, setCopyDialogOpen] = React.useState(false);
+  const [clearOpen, setClearOpen] = React.useState(false);
   const [selectedTargetFormat, setSelectedTargetFormat] = React.useState('');
 
   const [snackbar, setSnackbar] = React.useState({
@@ -192,6 +194,7 @@ export default function HeaderArea({
           >
             Copy to...
           </Button>
+          <Button onClick={() => setClearOpen(true)}>Clear</Button>
           <Button onClick={() => setConfirmOpen(true)}>Delete</Button>
         </ButtonGroup>
       </Box>
@@ -244,6 +247,27 @@ export default function HeaderArea({
           </select>
           <Button variant="contained" onClick={handleConfirmCopy}>
             Confirm Copy
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Clear deck confirmation dialog */}
+      <Dialog open={clearOpen} onClose={() => setClearOpen(false)}>
+        <DialogTitle>{`Are you sure you want to clear '${deckName}'?`}</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => setClearOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button
+            color="warning"
+            onClick={() => {
+              clearDeck();            // <-- this comes from App.jsx
+              setClearOpen(false);    // close dialog
+              openSnackbar(`Deck '${deckName || "Untitled"}' cleared.`, "info");
+            }}
+            autoFocus
+          >
+            Clear
           </Button>
         </DialogActions>
       </Dialog>

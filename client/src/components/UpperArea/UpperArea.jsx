@@ -13,6 +13,7 @@ export default function UpperArea({
   cards,
   currentDeckData,
   setCurrentDeckData,
+  clearDeck
 }) {
   return (
     <div className="upper-area">
@@ -36,6 +37,7 @@ export default function UpperArea({
         cards={cards}
         currentDeckData={currentDeckData}
         setCurrentDeckData={setCurrentDeckData}
+        clearDeck={clearDeck}
       />
     </div>
   );

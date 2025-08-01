@@ -234,6 +234,11 @@ function App() {
     setCurrentDeckData((prev) => ({ ...prev, [zone]: [...prev[zone], id] }));
   };
 
+   // --- Clear deck logic ---
+  const clearDeck = () => {
+    setCurrentDeckData({ main: [], extra: [], side: [] });
+  };
+
   // --- Render ---
   return (
     <main>
@@ -253,6 +258,7 @@ function App() {
             setCurrentCard={setCurrentCard}
             currentDeckData={currentDeckData}
             setCurrentDeckData={setCurrentDeckData}
+            clearDeck={clearDeck}
           />
 
           <div className="lower-app">
@@ -267,6 +273,7 @@ function App() {
               setCurrentDeckData={setCurrentDeckData}
               addCard={addCard}
               banStatus={banStatus}
+              clearDeck={clearDeck}
             />
           </div>
         </div>
