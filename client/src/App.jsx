@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './App.css';
 
 import UpperArea from './components/UpperArea/UpperArea.jsx';
@@ -11,6 +11,8 @@ function App() {
   const [cards, setCards] = useState({});
   const [currentCard, setCurrentCard] = useState(null);
   const [currentDeckData, setCurrentDeckData] = useState({ main: [], extra: [], side: [] });
+  const [hoverCard, setHoverCard] = useState(null);
+  const hoverTimeout = useRef(null);
 
   // --- Auto-import all card JSONs (incremental) ---
   const cardFiles = import.meta.glob('./cards/*.json', { eager: true });
@@ -287,7 +289,10 @@ function App() {
           />
 
           <div className="lower-app">
-            <CardArea currentCard={currentCard} />
+            <CardArea 
+              currentCard={hoverCard || currentCard}
+              setCurrentCard={setCurrentCard}
+            />
             <DeckArea
               currentFormat={currentFormat}
               currentDeck={currentDeck}
@@ -299,6 +304,9 @@ function App() {
               addCard={addCard}
               banStatus={banStatus}
               clearDeck={clearDeck}
+              hoverCard={hoverCard}
+              setHoverCard={setHoverCard}
+              hoverTimeout={hoverTimeout}
             />
           </div>
         </div>
@@ -315,6 +323,10 @@ function App() {
           setSortConfig={setSortConfig}
           banStatus={banStatus}
           banlist={banlist} // ✅ pass for visuals & filtering
+          hoverCard={hoverCard}
+          setHoverCard={setHoverCard}
+          hoverTimeout={hoverTimeout}
+
         />
       </div>
     </main>

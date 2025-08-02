@@ -19,6 +19,9 @@ export default function ExtraDeck({
   setCurrentCard,
   addCard,
   banStatus, // ✅ new prop for banlist visuals
+  hoverCard,
+  setHoverCard,
+  hoverTimeout
 }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
@@ -170,6 +173,14 @@ export default function ExtraDeck({
               }}
               onClick={() => setCurrentCard(card)}
               title="Double-click to remove / Right-click to add duplicate"
+              onMouseEnter={() => {
+                if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+                setHoverCard(card);
+              }}
+              onMouseLeave={() => {
+                if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+                hoverTimeout.current = setTimeout(() => setHoverCard(null), 150);
+              }}
             >
               <div className="card-wrapper">
                 <img

@@ -9,6 +9,9 @@ export default function SideDeck({
   setCurrentCard,
   addCard,
   banStatus, // ✅ for banlist badge
+  hoverCard,
+  setHoverCard,
+  hoverTimeout
 }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
@@ -124,6 +127,14 @@ export default function SideDeck({
               }}
               onClick={() => setCurrentCard(card)}
               title="Double-click to remove / Right-click to add duplicate"
+              onMouseEnter={() => {
+                if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+                setHoverCard(card);
+              }}
+              onMouseLeave={() => {
+                if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+                hoverTimeout.current = setTimeout(() => setHoverCard(null), 150);
+              }}
             >
               <div className="card-wrapper">
                 <img

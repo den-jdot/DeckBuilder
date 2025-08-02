@@ -8,7 +8,10 @@ export default function MainDeck({
   setCurrentDeckData,
   setCurrentCard,
   addCard,
-  banStatus
+  banStatus,
+  hoverCard,
+  setHoverCard,
+  hoverTimeout
 }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
@@ -196,6 +199,14 @@ export default function MainDeck({
               }}
               onClick={() => {setCurrentCard(card); console.log('Clicked card object:', card);}}
               title="Double-click to remove / Right-click to add duplicate"
+              onMouseEnter={() => {
+                if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+                setHoverCard(card);
+              }}
+              onMouseLeave={() => {
+                if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+                hoverTimeout.current = setTimeout(() => setHoverCard(null), 150);
+              }}
             >
               <div className="card-wrapper">
                 <img
@@ -206,6 +217,7 @@ export default function MainDeck({
                     height: '100%',
                     maxWidth: '100px',
                     objectFit: 'contain',
+                    
                   }}
                 />
                 {status && (

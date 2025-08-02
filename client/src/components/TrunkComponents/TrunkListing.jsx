@@ -7,7 +7,10 @@ export default function TrunkListing({
   addCard,
   currentDeckData,
   setCurrentDeckData,
-  banStatus // used for banlist visuals
+  banStatus, // used for banlist visuals
+  hoverCard,
+  setHoverCard,
+  hoverTimeout
 }) {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
@@ -100,6 +103,14 @@ export default function TrunkListing({
               handleAdd(card.id);
             }}
             style={{ cursor: 'grab' }}
+            onMouseEnter={() => {
+              if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+              setHoverCard(card);
+            }}
+            onMouseLeave={() => {
+              if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+              hoverTimeout.current = setTimeout(() => setHoverCard(null), 150);
+           }}
           >
             <img
               src={card.card_images?.[0]?.image_url_small}

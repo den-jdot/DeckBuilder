@@ -340,38 +340,45 @@ export default function TrunkFilter({
                   key={field}
                   className={direction ? "active" : ""}
                   onClick={(e) => {
-                    // Left click (main button)
+                    // Left click: toggle on ascending if inactive, or remove if active
                     e.preventDefault();
                     setSortConfig((prev) => {
                       const existing = prev.find((r) => r.field === field);
 
                       if (!existing) {
+                        // Inactive → activate ascending
                         return [...prev, { field, direction: "asc" }];
                       }
 
-                      // Remove this field from sortConfig
+                      // Active → remove (turn off)
                       return prev.filter((r) => r.field !== field);
                     });
                   }}
                   onContextMenu={(e) => {
-                    // Right click (secondary button)
+                    // Right click: toggle asc/desc if active, or activate as desc if inactive
                     e.preventDefault();
                     setSortConfig((prev) => {
                       const existing = prev.find((r) => r.field === field);
-                      if (!existing) return prev;
 
+                      if (!existing) {
+                        // Inactive → activate descending
+                        return [...prev, { field, direction: "desc" }];
+                      }
+
+                      // Active → toggle direction
                       const newDirection = existing.direction === "asc" ? "desc" : "asc";
                       return prev.map((r) =>
                         r.field === field ? { ...r, direction: newDirection } : r
                       );
                     });
                   }}
-                  title="Left click: toggle sort. Right click: change direction"
+                  title="Left click: toggle on/off (asc). Right click: start with desc or toggle asc/desc"
                 >
                   {label}
                   {direction === "asc" ? " ↑" : direction === "desc" ? " ↓" : ""}
                 </button>
               );
+
             })}
           </div>
         </div>
@@ -381,3 +388,40 @@ export default function TrunkFilter({
     
   );
 }
+
+                // OLD LOGIC
+                // <button
+                //   key={field}
+                //   className={direction ? "active" : ""}
+                //   onClick={(e) => {
+                //     // Left click (main button)
+                //     e.preventDefault();
+                //     setSortConfig((prev) => {
+                //       const existing = prev.find((r) => r.field === field);
+
+                //       if (!existing) {
+                //         return [...prev, { field, direction: "asc" }];
+                //       }
+
+                //       // Remove this field from sortConfig
+                //       return prev.filter((r) => r.field !== field);
+                //     });
+                //   }}
+                //   onContextMenu={(e) => {
+                //     // Right click (secondary button)
+                //     e.preventDefault();
+                //     setSortConfig((prev) => {
+                //       const existing = prev.find((r) => r.field === field);
+                //       if (!existing) return prev;
+
+                //       const newDirection = existing.direction === "asc" ? "desc" : "asc";
+                //       return prev.map((r) =>
+                //         r.field === field ? { ...r, direction: newDirection } : r
+                //       );
+                //     });
+                //   }}
+                //   title="Left click: toggle sort. Right click: change direction"
+                // >
+                //   {label}
+                //   {direction === "asc" ? " ↑" : direction === "desc" ? " ↓" : ""}
+                // </button>

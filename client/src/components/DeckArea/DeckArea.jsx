@@ -12,6 +12,9 @@ export default function DeckArea({
   setCurrentDeckData,
   addCard,
   banStatus,
+  hoverCard,
+  setHoverCard,
+  hoverTimeout
 }) {
 
   return (
@@ -26,6 +29,9 @@ export default function DeckArea({
         setCurrentDeckData={setCurrentDeckData}
         addCard={(id) => addCard(id, 'main')}
         banStatus={banStatus}
+        hoverCard={hoverCard}
+        setHoverCard={setHoverCard}
+        hoverTimeout={hoverTimeout}
       />
       <ExtraDeck
         cards={cards}
@@ -34,6 +40,9 @@ export default function DeckArea({
         setCurrentCard={setCurrentCard}
         addCard={(id) => addCard(id, 'extra')}
         banStatus={banStatus}
+        hoverCard={hoverCard}
+        setHoverCard={setHoverCard}
+        hoverTimeout={hoverTimeout}
       />
       <SideDeck
         cards={cards}
@@ -42,6 +51,9 @@ export default function DeckArea({
         setCurrentCard={setCurrentCard}
         addCard={(id) => addCard(id, 'side')}
         banStatus={banStatus}
+        hoverCard={hoverCard}
+        setHoverCard={setHoverCard}
+        hoverTimeout={hoverTimeout}
       />
     </div>
   );

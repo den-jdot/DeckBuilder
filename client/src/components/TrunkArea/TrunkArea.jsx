@@ -12,7 +12,10 @@ export default function TrunkArea({
   sortConfig,
   setSortConfig,
   banStatus,
-  banlist
+  banlist,
+  hoverCard,
+  setHoverCard,
+  hoverTimeout
 }) {
   // Local pagination and filtering state
   const [cardIds, setCardIds] = useState([]);
@@ -134,9 +137,28 @@ export default function TrunkArea({
       let valA = cardA?.[field];
       let valB = cardB?.[field];
 
+      // Special handling for frameType sorting
+      if (field === "frameType") {
+        // Monsters first
+        const isMonsterA = cardA.type?.toLowerCase().includes("monster") ? 0 : 1;
+        const isMonsterB = cardB.type?.toLowerCase().includes("monster") ? 0 : 1;
+        if (isMonsterA !== isMonsterB) return isMonsterA - isMonsterB;
+
+        // Among monsters, Normal first
+        const isNormalA = cardA.humanReadableCardType?.toLowerCase().includes("normal") ? 0 : 1;
+        const isNormalB = cardB.humanReadableCardType?.toLowerCase().includes("normal") ? 0 : 1;
+        if (isNormalA !== isNormalB) return isNormalA - isNormalB;
+
+        // Fall back to string comparison of frameType
+        valA = cardA.frameType ?? "";
+        valB = cardB.frameType ?? "";
+      }
+
+      // Normalize missing/unknown values
       if (valA === "?" || valA === undefined || valA === null) valA = NaN;
       if (valB === "?" || valB === undefined || valB === null) valB = NaN;
 
+      // Numeric comparison
       if (typeof valA === "number" && typeof valB === "number") {
         if (isNaN(valA) && isNaN(valB)) continue;
         if (isNaN(valA)) return 1;
@@ -146,13 +168,17 @@ export default function TrunkArea({
         continue;
       }
 
+      // String comparison
       const strA = String(valA).toLowerCase();
       const strB = String(valB).toLowerCase();
       if (strA < strB) return direction === "asc" ? -1 : 1;
       if (strA > strB) return direction === "asc" ? 1 : -1;
     }
-    return 0;
+
+    // Fallback: alphabetical by card name
+    return (cardA.name ?? "").localeCompare(cardB.name ?? "");
   });
+
 
   const visibleIds = sortedIds.slice(start, end);
   const maxPages = Math.ceil(sortedIds.length / cardsPerPage);
@@ -197,6 +223,9 @@ export default function TrunkArea({
         setSortConfig={setSortConfig}
         banStatus={banStatus}
         banlist={banlist}
+        hoverCard={hoverCard}
+        setHoverCard={setHoverCard}
+        hoverTimeout={hoverTimeout}
       />
 
       <TrunkNav currentPage={currentPage} setCurrentPage={setCurrentPage} maxPages={maxPages} />
