@@ -24,6 +24,8 @@ export default function UpperArea({
         setCurrentFormat={setCurrentFormat}
         currentDeck={currentDeck}
         setCurrentDeck={setCurrentDeck}
+        deckNameInput={deckNameInput}
+        setDeckNameInput={setDeckNameInput}
       />
 
       <HeaderArea

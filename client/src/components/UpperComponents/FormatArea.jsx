@@ -26,6 +26,8 @@ export default function FormatArea({
   setCurrentFormat,
   currentDeck,
   setCurrentDeck,
+  deckNameInput,
+  setDeckNameInput,
 }) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
@@ -59,7 +61,11 @@ export default function FormatArea({
 
     const formatObj = format.find((f) => f.name === selectedFormat);
     const firstDeck = formatObj?.decks ? Object.keys(formatObj.decks)[0] : "";
-    setCurrentDeck(firstDeck);
+    if (Object.hasOwn(formatObj.decks, deckNameInput)) {
+      setCurrentDeck(deckNameInput);
+    } else {
+      setCurrentDeck(firstDeck);
+    }
   };
 
   const handleMenuItemClick = (event, index) => {
