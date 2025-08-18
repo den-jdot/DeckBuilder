@@ -155,23 +155,7 @@ export default function HeaderArea({
 
   return (
     <div className="header-area">
-      {/* Deck name input */}
-      <Box component="form" noValidate autoComplete="off" sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' } }}>
-        <TextField
-          label="Deck Name"
-          value={deckNameInput ?? ''}
-          onChange={(e) => setDeckNameInput(e.target.value)}
-          variant="outlined"
-          InputLabelProps={{ style: { color: 'white' } }}
-          InputProps={{ style: { color: 'white' } }}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': { borderColor: 'white' },
-              '&:hover fieldset': { borderColor: 'white' },
-            },
-          }}
-        />
-      </Box>
+
 
       {/* Action buttons */}
       <Box

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
@@ -108,6 +109,24 @@ export default function FormatArea({
           </FormControl>
         </Box>
       </div>
+
+            {/* Deck name input */}
+      <Box component="form" noValidate autoComplete="off" sx={{ '& .MuiTextField-root': { m: 1, width: '25ch' } }}>
+        <TextField
+          label="Deck Name"
+          value={deckNameInput ?? ''}
+          onChange={(e) => setDeckNameInput(e.target.value)}
+          variant="outlined"
+          InputLabelProps={{ style: { color: 'white' } }}
+          InputProps={{ style: { color: 'white' } }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': { borderColor: 'white' },
+              '&:hover fieldset': { borderColor: 'white' },
+            },
+          }}
+        />
+      </Box>
 
       {/* DECK SELECTOR */}
       <div className="deck-selector">

@@ -47,9 +47,8 @@ main {
 }
 
 .lower-app {
-  flex: 1;
-  height: 89%;
   display: flex;
+  height: 100%; 
   flex-direction: row;
   align-items: stretch;
   justify-content: flex-start;
@@ -63,22 +62,19 @@ main {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   padding: 0.25rem;
-  margin-bottom: 0.25rem;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-self: flex-start;
   min-height: min-content;
 }
 
 .format-area {
-  width: auto;
+  width: 40%;
   /* border: 1px solid red; */
 }
 
 .header-area {
-  width: 40%;
-  min-width: 368px;
-  display: flex;
+  width: 45%;
   /* border: 1px solid red; */
 }
 
