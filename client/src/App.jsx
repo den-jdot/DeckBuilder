@@ -165,20 +165,47 @@ function App() {
   // --- Load deck when format or deck changes ---
   useEffect(() => {
     if (!currentDeck || !currentFormat) return;
+
     const formatObj = format.find((f) => f.name === currentFormat);
     if (!formatObj) return;
 
     const savedDeck = formatObj.decks?.[currentDeck];
-    setCurrentDeckData(
-      savedDeck && typeof savedDeck === 'object'
-        ? {
-            main: Array.isArray(savedDeck.main) ? savedDeck.main : [],
-            extra: Array.isArray(savedDeck.extra) ? savedDeck.extra : [],
-            side: Array.isArray(savedDeck.side) ? savedDeck.side : [],
-          }
-        : { main: [], extra: [], side: [] }
-    );
-  }, [currentDeck, currentFormat]);
+    if (!savedDeck || typeof savedDeck !== "object") {
+      setCurrentDeckData({ main: [], extra: [], side: [] });
+      return;
+    }
+
+    const filtered = { main: [], extra: [], side: [] };
+    let changed = false;
+
+    for (const zone of ["main", "extra", "side"]) {
+      const raw = Array.isArray(savedDeck[zone]) ? savedDeck[zone] : [];
+      filtered[zone] = raw.filter((id) => {
+        const exists = Boolean(cards[String(id)]);
+        if (!exists) changed = true;
+        return exists;
+      });
+    }
+
+    if (changed) {
+      // Update the deck in format state to remove invalid cards
+      setFormat((prevFormats) =>
+        prevFormats.map((f) =>
+          f.name === currentFormat
+            ? {
+                ...f,
+                decks: {
+                  ...f.decks,
+                  [currentDeck]: filtered,
+                },
+              }
+            : f
+        )
+      );
+    }
+
+    setCurrentDeckData(filtered);
+  }, [currentDeck, currentFormat, cards]);
 
   // --- Merge card JSONs up to the selected format ---
   useEffect(() => {
