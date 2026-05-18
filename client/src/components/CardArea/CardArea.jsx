@@ -24,7 +24,7 @@ export default function CardArea({ currentCard, setCurrentCard }) {
             </button>
             <p>{currentCard.humanReadableCardType}</p>
           </div>
-          <p>Desc: {currentCard.desc}</p>
+          <p>{currentCard.desc}</p>
         </>
       ) : (
         <p>Select a card to see details.</p>
