@@ -141,6 +141,9 @@ function App() {
   // --- Save current deck into format state ---
   useEffect(() => {
     if (!currentDeck || !currentFormat) return;
+
+    if (Object.keys(cards).length === 0) return; // async guard: don't save while card pool is loading
+
     const normalize = (list) => list.map(String);
 
     setFormat((prevFormats) =>
@@ -165,6 +168,8 @@ function App() {
   // --- Load deck when format or deck changes ---
   useEffect(() => {
     if (!currentDeck || !currentFormat) return;
+
+    if (Object.keys(cards).length === 0) return; // async guard: don't load/filter while card pool is loading
 
     const formatObj = format.find((f) => f.name === currentFormat);
     if (!formatObj) return;
