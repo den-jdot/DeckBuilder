@@ -313,8 +313,8 @@ main {
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: repeat(12, 1fr); /* x per row */
-  grid-auto-rows: 1fr; /* let aspect-ratio define height */
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* OLD repeat(12, 1fr) x per row */
+  /*grid-auto-rows: 1fr;  let aspect-ratio define height */
   gap: 0.25rem;
   overflow-y: auto;
   box-sizing: border-box;
