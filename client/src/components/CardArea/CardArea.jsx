@@ -22,6 +22,7 @@ export default function CardArea({ currentCard, setCurrentCard }) {
             >
               ✖ Clear
             </button>
+            <p>{currentCard.name}</p>
             <p>{currentCard.humanReadableCardType}</p>
           </div>
           <p>{currentCard.desc}</p>

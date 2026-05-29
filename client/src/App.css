@@ -324,7 +324,7 @@ main {
   position: relative;
   box-sizing: border-box;
   border-radius: 4px;
-  aspect-ratio: 3/4;;
+  aspect-ratio: 3/4;
   overflow: hidden;
   outline: 0 solid transparent; /* prepare for hover outline */
   transition: transform 0.15s ease-in-out, outline 0.15s ease-in-out;
