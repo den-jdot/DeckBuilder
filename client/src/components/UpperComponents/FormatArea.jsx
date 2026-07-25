@@ -164,7 +164,12 @@ export default function FormatArea({
                   placement === 'bottom' ? 'center top' : 'center bottom',
               }}
             >
-              <Paper>
+              <Paper
+                sx={{
+                maxHeight: 600,       // Set a max height (adjust as needed)
+                overflow: 'auto',     // Enable scrolling
+                }}
+              >
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList id="split-button-menu" autoFocusItem>
                     {deckNames.map((option, index) => (
