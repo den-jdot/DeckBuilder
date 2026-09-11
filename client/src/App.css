@@ -58,7 +58,9 @@ main {
 
 .upper-area {
   width: 99.325%;
-  height: 10%;
+  /* height: 10% entfernen */
+  flex: 0 0 auto;         /* nimmt nur so viel Platz wie nötig */
+  min-height: fit-content;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -67,7 +69,6 @@ main {
   display: flex;
   flex-direction: column;
   align-self: flex-start;
-  min-height: min-content;
 }
 
 .format-area {
