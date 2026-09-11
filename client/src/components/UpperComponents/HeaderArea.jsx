@@ -153,6 +153,45 @@ export default function HeaderArea({
     openSnackbar(`Deck '${deckName}' deleted.`, "info");
   };
 
+  // Export all formats and decks as JSON
+  const handleExport = () => {
+    const dataStr = JSON.stringify(format, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `yugioh-decks-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    openSnackbar('Decks exported successfully.', 'success');
+  };
+
+  // Import formats and decks from a JSON file
+  const handleImport = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (!Array.isArray(imported)) {
+          throw new Error('Invalid file format: expected an array of formats.');
+        }
+        setFormat(imported);
+        openSnackbar('Decks imported successfully. Reload to see all changes.', 'success');
+      } catch (err) {
+        console.error(err);
+        openSnackbar(`Import failed: ${err.message}`, 'error');
+      }
+    };
+    reader.readAsText(file);
+    // Reset input so the same file can be selected again
+    event.target.value = '';
+  };
+
   return (
     <div className="header-area">
 
@@ -176,10 +215,20 @@ export default function HeaderArea({
               setCopyDialogOpen(true);
             }}
           >
-            Copy to...
+            Copy
           </Button>
           <Button onClick={() => setClearOpen(true)}>Clear</Button>
           <Button onClick={() => setConfirmOpen(true)}>Delete</Button>
+          <Button onClick={handleExport}>Export</Button>
+          <Button component="label">
+            Import
+            <input
+              type="file"
+              accept="application/json,.json"
+              hidden
+              onChange={handleImport}
+            />
+          </Button>
         </ButtonGroup>
       </Box>
 
