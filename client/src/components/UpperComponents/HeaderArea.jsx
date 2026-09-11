@@ -27,6 +27,8 @@ export default function HeaderArea({
   currentDeckData,
   setCurrentDeckData,
   clearDeck,
+  saveCurrentDeck,
+  isDirty,
 }) {
   const deckName = (deckNameInput ?? '').trim();
 
@@ -57,29 +59,11 @@ export default function HeaderArea({
       return;
     }
 
-    const updatedFormats = [...format];
-    const formatIndex = updatedFormats.findIndex((f) => f.name === currentFormat);
-    if (formatIndex === -1) {
-      console.error("Current format not found");
-      return;
-    }
-
-    const formatObj = updatedFormats[formatIndex];
-    if (!formatObj.decks) formatObj.decks = {};
-
-    formatObj.decks[deckName] = {
-      main: normalize(currentDeckData.main),
-      extra: normalize(currentDeckData.extra),
-      side: normalize(currentDeckData.side),
-    };
-
-    // Sort decks alphabetically
-    formatObj.decks = Object.fromEntries(
-      Object.entries(formatObj.decks).sort(([a], [b]) => a.localeCompare(b))
-    );
-
-    setFormat(updatedFormats);
+    // Deck in den aktuellen Slot umbenennen bzw. neu anlegen.
+    // saveCurrentDeck() in App.jsx schreibt currentDeckData in format.
     setCurrentDeck(deckName);
+    saveCurrentDeck();
+
     openSnackbar(`Deck '${deckName}' saved successfully.`, 'success');
   };
 
@@ -188,13 +172,11 @@ export default function HeaderArea({
       }
     };
     reader.readAsText(file);
-    // Reset input so the same file can be selected again
     event.target.value = '';
   };
 
   return (
     <div className="header-area">
-
 
       {/* Action buttons */}
       <Box
@@ -206,7 +188,12 @@ export default function HeaderArea({
         }}
       >
         <ButtonGroup variant="contained" aria-label="Deck actions">
-          <Button onClick={handleSave}>Save</Button>
+          <Button
+            onClick={handleSave}
+            color={isDirty ? 'warning' : 'primary'}
+          >
+            Save
+          </Button>
           <Button
             onClick={() => {
               setSelectedTargetFormat(
@@ -294,8 +281,8 @@ export default function HeaderArea({
           <Button
             color="warning"
             onClick={() => {
-              clearDeck();            // <-- this comes from App.jsx
-              setClearOpen(false);    // close dialog
+              clearDeck();
+              setClearOpen(false);
               openSnackbar(`Deck '${deckName || "Untitled"}' cleared.`, "info");
             }}
             autoFocus

@@ -13,7 +13,9 @@ export default function UpperArea({
   cards,
   currentDeckData,
   setCurrentDeckData,
-  clearDeck
+  clearDeck,
+  saveCurrentDeck,
+  isDirty,
 }) {
   return (
     <div className="upper-area">
@@ -40,6 +42,8 @@ export default function UpperArea({
         currentDeckData={currentDeckData}
         setCurrentDeckData={setCurrentDeckData}
         clearDeck={clearDeck}
+        saveCurrentDeck={saveCurrentDeck}
+        isDirty={isDirty}
       />
     </div>
   );

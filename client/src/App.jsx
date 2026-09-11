@@ -14,11 +14,14 @@ function App() {
   const [hoverCard, setHoverCard] = useState(null);
   const hoverTimeout = useRef(null);
 
+  // --- Dirty flag: gibt es ungespeicherte Änderungen? ---
+  const [isDirty, setIsDirty] = useState(false);
+
   // --- Auto-import all card JSONs (incremental) ---
   const cardFiles = import.meta.glob('./cards/*.json', { eager: true });
   const DEFAULT_FORMATS = Object.keys(cardFiles)
     .map((path) => ({ name: path.split('/').pop().replace('.json', ''), decks: {} }))
-    .sort((a, b) => a.name.localeCompare(b.name)); // chronological by filename
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   // --- Format & Deck Metadata ---
   const [format, setFormat] = useState(() => {
@@ -69,10 +72,9 @@ function App() {
 
     const loadBanlist = async () => {
       try {
-        // Reset first to avoid stale visuals
         setBanlist({ banned: [], limited: [], semi: [] });
 
-        const response = await fetch(`/banlists/${currentFormat}.json`); // ✅ public folder
+        const response = await fetch(`/banlists/${currentFormat}.json`);
         if (!response.ok) {
           console.warn(`⚠️ No banlist found for ${currentFormat}`);
           return;
@@ -111,12 +113,12 @@ function App() {
         else if (banlist.semi.includes(card.name)) newStatus = "2";
 
         if (card.banStatus !== newStatus) {
-          updated[id] = { ...card, banStatus: newStatus }; // clone only if changed
+          updated[id] = { ...card, banStatus: newStatus };
           changed = true;
         }
       }
 
-      return changed ? updated : prev; // avoid re-render loop if nothing changed
+      return changed ? updated : prev;
     });
   }, [banlist]);
 
@@ -138,38 +140,10 @@ function App() {
     if (missing.length > 0) setFormat((prev) => [...prev, ...missing]);
   }, []);
 
-  // --- Save current deck into format state ---
-  useEffect(() => {
-    if (!currentDeck || !currentFormat) return;
-
-    if (Object.keys(cards).length === 0) return; // async guard: don't save while card pool is loading
-
-    const normalize = (list) => list.map(String);
-
-    setFormat((prevFormats) =>
-      prevFormats.map((f) =>
-        f.name === currentFormat
-          ? {
-              ...f,
-              decks: {
-                ...f.decks,
-                [currentDeck]: {
-                  main: normalize(currentDeckData.main),
-                  extra: normalize(currentDeckData.extra),
-                  side: normalize(currentDeckData.side),
-                },
-              },
-            }
-          : f
-      )
-    );
-  }, [currentDeckData, currentDeck, currentFormat]);
-
   // --- Load deck when format or deck changes ---
   useEffect(() => {
     if (!currentDeck || !currentFormat) return;
-
-    if (Object.keys(cards).length === 0) return; // async guard: don't load/filter while card pool is loading
+    if (Object.keys(cards).length === 0) return;
 
     const formatObj = format.find((f) => f.name === currentFormat);
     if (!formatObj) return;
@@ -193,7 +167,6 @@ function App() {
     }
 
     if (changed) {
-      // Update the deck in format state to remove invalid cards
       setFormat((prevFormats) =>
         prevFormats.map((f) =>
           f.name === currentFormat
@@ -253,6 +226,62 @@ function App() {
     buildCardPool();
   }, [currentFormat]);
 
+  // --- Dirty-Flag: vergleicht currentDeckData mit dem gespeicherten Eintrag ---
+  useEffect(() => {
+    if (!currentDeck || !currentFormat) {
+      setIsDirty(false);
+      return;
+    }
+
+    const formatObj = format.find((f) => f.name === currentFormat);
+    const saved = formatObj?.decks?.[currentDeck];
+
+    if (!saved) {
+      // Kein gespeicherter Eintrag → dirty, wenn schon Karten drin sind
+      const hasCards =
+        currentDeckData.main.length +
+        currentDeckData.extra.length +
+        currentDeckData.side.length > 0;
+      setIsDirty(hasCards);
+      return;
+    }
+
+    const equal = ["main", "extra", "side"].every(
+      (zone) =>
+        JSON.stringify(saved[zone] ?? []) ===
+        JSON.stringify(currentDeckData[zone] ?? [])
+    );
+
+    setIsDirty(!equal);
+  }, [currentDeckData, format, currentDeck, currentFormat]);
+
+  // --- Save current deck into format state (explizit, nicht mehr automatisch) ---
+  const saveCurrentDeck = () => {
+    if (!currentDeck || !currentFormat) return;
+
+    const normalize = (list) => list.map(String);
+
+    setFormat((prevFormats) =>
+      prevFormats.map((f) =>
+        f.name === currentFormat
+          ? {
+              ...f,
+              decks: {
+                ...f.decks,
+                [currentDeck]: {
+                  main: normalize(currentDeckData.main),
+                  extra: normalize(currentDeckData.extra),
+                  side: normalize(currentDeckData.side),
+                },
+              },
+            }
+          : f
+      )
+    );
+
+    setIsDirty(false);
+  };
+
   // --- Deck Adding Logic ---
   const EXTRA_DECK_TYPES = ['Fusion', 'Synchro', 'XYZ', 'Link', 'Synchro Pendulum', 'Fusion Pendulum', 'XYZ Pendulum'];
   const isExtraType = (card) => EXTRA_DECK_TYPES.some((type) => card?.type?.toLowerCase().includes(type.toLowerCase()));
@@ -293,7 +322,7 @@ function App() {
     setCurrentDeckData((prev) => ({ ...prev, [zone]: [...prev[zone], id] }));
   };
 
-   // --- Clear deck logic ---
+  // --- Clear deck logic ---
   const clearDeck = () => {
     setCurrentDeckData({ main: [], extra: [], side: [] });
   };
@@ -318,6 +347,8 @@ function App() {
             currentDeckData={currentDeckData}
             setCurrentDeckData={setCurrentDeckData}
             clearDeck={clearDeck}
+            saveCurrentDeck={saveCurrentDeck}
+            isDirty={isDirty}
           />
 
           <div className="lower-app">
@@ -354,11 +385,10 @@ function App() {
           sortConfig={sortConfig}
           setSortConfig={setSortConfig}
           banStatus={banStatus}
-          banlist={banlist} // ✅ pass for visuals & filtering
+          banlist={banlist}
           hoverCard={hoverCard}
           setHoverCard={setHoverCard}
           hoverTimeout={hoverTimeout}
-
         />
       </div>
     </main>
